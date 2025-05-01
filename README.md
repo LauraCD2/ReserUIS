@@ -8,14 +8,24 @@ Sistema de reservas de espacios de la Universidad Industrial de Santander. Este 
 - Crear, editar y listar espacios y salas
 - Consultar historial de reservas con su estado (reservado o cancelado)
 - Visualizar reportes y estadísticas (próximamente)
+- Navegar por espacios y reservar salas específicas (Coliseo, Canchas, etc.)
+- Confirmar reservas exitosas visualmente
 
 ---
 
 ## 🧩 Tecnologías
 
+### Frontend
 - HTML5, CSS3 y JavaScript
 - Tipografía institucional `Humanist521` integrada vía `@font-face`
 - Layout responsive básico con Flexbox y Grid
+
+### Backend
+- Node.js + Express
+- Base de datos PostgreSQL (hosteada en Render)
+- Conexión vía `pg` (node-postgres)
+- CORS habilitado para conexión frontend
+- API REST en desarrollo (ruta de prueba `/` activa)
 
 ---
 
@@ -23,25 +33,36 @@ Sistema de reservas de espacios de la Universidad Industrial de Santander. Este 
 
 ```
 reseruis/
-├── index.html               # Pantalla de login
-├── dashboard.html           # Tarjetas de espacios disponibles
-├── gestionEspacios.html     # Formulario de creación y edición de espacios/salas
-├── reservas.html            # Formulario de reservas y calendario
-├── historial.html           # Listado de historial de reservas
+├── index.html                 # Pantalla de login
+├── dashboard.html             # Tarjetas de espacios disponibles
+├── gestionEspacios.html       # Formulario de creación y edición de espacios/salas
+├── reservas.html              # Formulario de reservas y calendario
+├── historial.html             # Listado de historial de reservas
+├── notificaciones.html        # Alertas por cancelación o confirmación
+├── logout.html                # Cierre de sesión con redirección automática
+├── seleccionarSala.html       # Salas del Coliseo para reservar
+├── reservarSalaCanchas.html   # Salas deportivas tipo canchas (fútbol, squash, etc.)
+├── reservaSala.html           # Formulario final para reservar una sala
 ├── css/
-│   └── styles.css           # Estilos globales, con fuente institucional
+│   └── styles.css             # Estilos globales, con fuente institucional
 ├── js/
-│   └── main.js              # Script base para interacción frontend
+│   └── main.js                # Script base para interacción frontend
 ├── fonts/
-│   └── *.woff2              # Archivos Humanist521 (uso institucional)
+│   └── *.woff2                # Archivos Humanist521 (uso institucional)
 ├── assets/
-│   └── logo.png             # Imágenes, íconos u otros recursos
-└── README.md                # Documentación del proyecto
+│   └── logo.png               # Imágenes, íconos u otros recursos
+├── backend/
+│   ├── index.js               # Servidor Express (API REST)
+│   ├── package.json           # Dependencias backend (Express, pg, cors)
+│   └── package-lock.json      # Lockfile generado automáticamente
+└── README.md                  # Documentación del proyecto
 ```
 
 ---
 
 ## ▶️ Cómo usar este proyecto localmente
+
+### Frontend
 
 1. Clona este repositorio:
 ```bash
@@ -56,20 +77,38 @@ code .
 
 3. Instala la extensión **Live Server** en VS Code (si no la tienes).
 
-4. Haz clic derecho en `index.html` → **"Open with Live Server"**  
-   Esto abrirá la app en tu navegador en `http://localhost:5500/` (u otro puerto).
+4. Haz clic derecho en `index.html` → **"Open with Live Server"**
+
+---
+
+### Backend
+
+1. Abre terminal en la carpeta `backend/`
+2. Instala dependencias:
+```bash
+npm install
+```
+
+3. Ejecuta el servidor:
+```bash
+node index.js
+```
+
+4. El backend corre en: `http://localhost:3001`  
+   Puedes probar con: [GET /](http://localhost:3001)
 
 ---
 
 ## ⚠️ Notas importantes
 
-- La fuente `Humanist521`, fuente institucional de la UIS, de uso libre, está integrada localmente.
-- El proyecto usa **camelCase** para todos los IDs, clases y nombres de variables.
+- La fuente `Humanist521`, fuente institucional de la UIS, está integrada localmente.
+- El proyecto usa **camelCase** para IDs, clases y nombres de variables.
+- Todas las vistas están listas para conectarse vía `fetch()`.
 
 ---
 
 ## 🚧 Pendiente
 
-- [ ] Conexión real con backend (login, CRUD de reservas, etc.)
-- [ ] Reportes y gráficas con datos dinámicos
+- [ ] Endpoints reales para login, reservas, historial
+- [ ] Reportes y gráficas con datos reales
 - [ ] Validaciones y feedback visual en formularios
