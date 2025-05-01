@@ -46,7 +46,7 @@ reseruis/
 
 1. Clona este repositorio:
 ```bash
-git clone https://github.com/tuusuario/reseruis.git
+git clone https://github.com/LauraCD2/ReserUIS.git
 ```
 
 2. Abre la carpeta en Visual Studio Code:
