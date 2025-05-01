@@ -1,19 +1,40 @@
 # ReserUIS – Sistema de Reservas UIS
 
-Frontend del sistema de reservas de espacios de la Universidad Industrial de Santander. Este proyecto permite a estudiantes, docentes y administrativos:
+Sistema de reservas de espacios de la Universidad Industrial de Santander. Este proyecto permite a estudiantes, docentes y administrativos:
 
-- Iniciar sesión según su rol
-- Visualizar espacios disponibles
-- Reservar salas en fechas y horas específicas
-- Gestionar espacios y salas
-- Visualizar reportes y estadísticas (futuro)
+- Iniciar sesión según su rol (estudiante, profesor, administrativo o administrador)
+- Visualizar espacios como el Coliseo, biblioteca, salas de entrenamiento, etc.
+- Reservar salas en horarios disponibles
+- Crear, editar y listar espacios y salas
+- Consultar historial de reservas con su estado (reservado o cancelado)
+- Visualizar reportes y estadísticas (próximamente)
 
-### Estructura
+---
 
-- `index.html`: Página de login
-- `dashboard.html`: Selector de espacios como COLISEO, CANCHAS, etc.
-- `gestionEspacios.html`: Formulario para crear/editar espacios y salas
-- `reservas.html`: Formulario de reserva con campos dinámicos y calendario
-- `css/styles.css`: Hoja de estilos general
-- `js/main.js`: Script base para manejo de formularios y lógica frontend
-- `assets/`: Imágenes y logos
+## 🧩 Tecnologías
+
+- HTML5, CSS3 y JavaScript
+- Tipografía institucional `Humanist521` integrada vía `@font-face`
+- Layout responsive básico con Flexbox y Grid
+- Estilo visual fiel al diseño institucional proporcionado (PDF)
+
+---
+
+## 📁 Estructura del proyecto
+
+```bash
+reseruis/
+├── index.html               # Pantalla de login
+├── dashboard.html           # Tarjetas de espacios disponibles
+├── gestionEspacios.html     # Formulario de creación y edición de espacios/salas
+├── reservas.html            # Formulario de reservas y calendario
+├── historial.html           # Listado de historial de reservas
+├── css/
+│   └── styles.css           # Estilos globales, con fuente institucional
+├── js/
+│   └── main.js              # Script base para interacción frontend
+├── fonts/
+│   └── *.woff2              # Archivos Humanist521 (uso institucional)
+├── assets/
+│   └── logo.png             # Imágenes, íconos u otros recursos
+└── README.md                # Documentación del proyecto
