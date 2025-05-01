@@ -1,15 +1,19 @@
-# ReserUIS
+# ReserUIS – Sistema de Reservas UIS
 
-reseruis/
-├── index.html               # Pantalla de inicio de sesión (login)
-├── dashboard.html           # Vista principal con tarjetas de espacios disponibles
-├── gestionEspacios.html     # Formulario para crear/editar espacios y salas
-├── reservas.html            # Formulario para agendar reservas y ver calendario
-├── css/
-│   └── styles.css           # Estilos globales compartidos entre todas las vistas
-├── js/
-│   └── main.js              # Lógica JS básica para formularios y futuras peticiones al backend
-├── assets/
-│   └── logo.png             # Logo o imágenes de la app
-├── .gitignore               # Archivos que Git debe ignorar (opcional)
-└── README.md                # Documentación del repositorio
+Frontend del sistema de reservas de espacios de la Universidad Industrial de Santander. Este proyecto permite a estudiantes, docentes y administrativos:
+
+- Iniciar sesión según su rol
+- Visualizar espacios disponibles
+- Reservar salas en fechas y horas específicas
+- Gestionar espacios y salas
+- Visualizar reportes y estadísticas (futuro)
+
+### Estructura
+
+- `index.html`: Página de login
+- `dashboard.html`: Selector de espacios como COLISEO, CANCHAS, etc.
+- `gestionEspacios.html`: Formulario para crear/editar espacios y salas
+- `reservas.html`: Formulario de reserva con campos dinámicos y calendario
+- `css/styles.css`: Hoja de estilos general
+- `js/main.js`: Script base para manejo de formularios y lógica frontend
+- `assets/`: Imágenes y logos
