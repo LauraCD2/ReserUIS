@@ -64,7 +64,7 @@ code .
 
 ## ⚠️ Notas importantes
 
-- La fuente `Humanist521` está integrada localmente.
+- La fuente `Humanist521`, fuente institucional de la UIS, de uso libre, está integrada localmente.
 - El proyecto usa **camelCase** para todos los IDs, clases y nombres de variables.
 
 ---
