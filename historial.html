@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Historial de Reservas | ReserUIS</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body, h1, h2, p, label, input, button {
+      font-family: 'Humanist521', sans-serif;
+    }
+
+    h1 {
+      font-weight: 700;
+    }
+
+    .historialContainer {
+      padding: 2rem;
+    }
+
+    .reservaFila {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      gap: 1rem;
+      align-items: center;
+      background-color: #f7f7f7;
+      margin-bottom: 0.8rem;
+      padding: 1rem;
+      border-radius: 6px;
+    }
+
+    .reservaFila.encabezado {
+      background-color: #045D18;
+      color: white;
+      font-weight: 700;
+    }
+
+    .estadoReservado {
+      background-color: #59C208;
+      color: white;
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .estadoCancelado {
+      background-color: #b30000;
+      color: white;
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    header.mainHeader {
+      background-color: #045D18;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header.mainHeader nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    header.mainHeader nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <header class="mainHeader">
+    <h1>Historial de Reservas</h1>
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="gestionEspacios.html">Gestión</a></li>
+        <li><a href="reservas.html">Reservas</a></li>
+        <li><a href="#">Salir</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="historialContainer">
+    <div class="reservaFila encabezado">
+      <div>Fecha</div>
+      <div>Espacio</div>
+      <div>Sala</div>
+      <div>Horario</div>
+      <div>Estado</div>
+    </div>
+
+    <div class="reservaFila">
+      <div>4/28/2025</div>
+      <div>COLISEO</div>
+      <div>GIMNASIO</div>
+      <div>2:00 PM</div>
+      <div class="estadoReservado">RESERVADO</div>
+    </div>
+
+    <div class="reservaFila">
+      <div>4/29/2025</div>
+      <div>COLISEO</div>
+      <div>SALA YOGA</div>
+      <div>5:00 PM</div>
+      <div class="estadoCancelado">CANCELADO</div>
+    </div>
+
+    <div class="reservaFila">
+      <div>5/29/2024</div>
+      <div>COLISEO</div>
+      <div>SALA BICICLETAS</div>
+      <div>8:00 AM</div>
+      <div class="estadoReservado">RESERVADO</div>
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

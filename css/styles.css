@@ -1,3 +1,93 @@
+@font-face {
+  font-family: 'Humanist521';
+  src: url('../fonts/Humanist521BT-Roman.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Humanist521';
+  src: url('../fonts/Humanist521BT-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Humanist521';
+  src: url('../fonts/Humanist521BT-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Humanist521';
+  src: url('../fonts/Humanist521BT-BoldItalic.woff2') format('woff2');
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Humanist521';
+  src: url('../fonts/Humanist521BT-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Humanist521';
+  src: url('../fonts/Humanist521BT-LightItalic.woff2') format('woff2');
+  font-weight: 300;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Humanist521';
+  src: url('../fonts/Humanist521BT-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Humanist521';
+  src: url('../fonts/Humanist521BT-UltraBold.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Opcionales: condensadas */
+@font-face {
+  font-family: 'Humanist521 Condensed';
+  src: url('../fonts/Humanist521BT-RomanCondensed.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Humanist521 Condensed';
+  src: url('../fonts/Humanist521BT-BoldCondensed.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Humanist521 Condensed';
+  src: url('../fonts/Humanist521BT-XtraBoldCondensed.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+
 body {
   margin: 0;
   padding: 0;

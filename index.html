@@ -1,10 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ReserUIS - Iniciar Sesión</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <style>
+    body {
+      font-family: 'Humanist521', sans-serif;
+    }
+
+    h1, h2, p, label, select, input, button, .adminBadge {
+      font-family: 'Humanist521', sans-serif;
+    }
+
+    .reser {
+      color: #59C208;
+      font-weight: 400;
+    }
+
+    .uis {
+      color: #045D18;
+      font-weight: 700;
+    }
+
+    .adminBadge {
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    h2 {
+      font-weight: 700;
+    }
+
+    label {
+      font-weight: 500;
+    }
+
+    button {
+      font-weight: 700;
+    }
+  </style>
 </head>
 <body>
   <div class="loginWrapper">
@@ -26,10 +63,10 @@
         </select>
 
         <label for="code">Código</label>
-        <input type="text" id="code" name="code" placeholder="Escribe el código" required>
+        <input type="text" id="code" name="code" placeholder="Escribe el código" required />
 
         <label for="password">Contraseña</label>
-        <input type="password" id="password" name="password" placeholder="Escribe la contraseña" required>
+        <input type="password" id="password" name="password" placeholder="Escribe la contraseña" required />
 
         <button type="submit">Iniciar Sesión</button>
       </form>
