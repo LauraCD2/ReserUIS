@@ -1,0 +1,283 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fff;
+}
+
+.loginWrapper {
+  display: flex;
+  height: 100vh;
+}
+
+.leftPanel {
+  flex: 1;
+  background-color: #fff;
+  color: #333;
+  padding: 5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+.leftPanel h1 {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.reser {
+  color: #59C208;
+}
+
+.uis {
+  color: #045D18;
+  font-weight: bold;
+}
+
+.leftPanel p {
+  font-size: 1rem;
+  margin-top: 1.5rem;
+  color: #555;
+  max-width: 400px;
+}
+
+.rightPanel {
+  flex: 1;
+  background-color: #fff;
+  padding: 5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.adminBadge {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  background-color: #ccc;
+  color: #333;
+  font-size: 0.8rem;
+  font-weight: bold;
+  padding: 0.4rem 1rem;
+  border-radius: 5px;
+}
+
+.rightPanel h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+form label {
+  margin-top: 1rem;
+  display: block;
+  font-weight: 500;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 0.4rem;
+  background-color: #dcdcdc;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+form button {
+  margin-top: 2rem;
+  width: 100%;
+  padding: 1rem;
+  background-color: #111;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #333;
+}
+
+.mainHeader {
+  background-color: #045D18;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mainHeader h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.mainHeader nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+.mainHeader nav a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.spaceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.spaceCard {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1.5rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.spaceCard h2 {
+  margin-top: 0;
+  color: #045D18;
+}
+
+.spaceCard p {
+  margin: 1rem 0;
+  color: #444;
+}
+
+.spaceCard button {
+  padding: 0.6rem 1.2rem;
+  background-color: #045D18;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.spaceCard button:hover {
+  background-color: #063e12;
+}
+
+.formSection {
+  display: flex;
+  gap: 3rem;
+  padding: 2rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+form {
+  flex: 1;
+  min-width: 320px;
+  max-width: 500px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+form h2 {
+  margin-top: 0;
+  color: #045D18;
+}
+
+form label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+form input,
+form textarea {
+  width: 100%;
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  resize: vertical;
+}
+
+form button {
+  margin-top: 1.5rem;
+  margin-right: 1rem;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  background-color: #045D18;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #063e12;
+}
+
+.listSection {
+  flex: 1;
+  min-width: 300px;
+}
+
+.listSection ul {
+  list-style: none;
+  padding: 0;
+}
+
+.listSection li {
+  background-color: #f2f2f2;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+  border-radius: 5px;
+}
+
+.reservaMain {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem;
+  align-items: flex-start;
+}
+
+.formReserva {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calendarSection {
+  flex: 2;
+  min-width: 400px;
+}
+
+.calendarSection h2 {
+  margin-bottom: 1rem;
+}
+
+.calendarPlaceholder {
+  height: 300px;
+  background-color: #f2f2f2;
+  border-radius: 10px;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  font-size: 1rem;
+  border: 1px dashed #bbb;
+}

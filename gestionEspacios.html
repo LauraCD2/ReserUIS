@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Espacios | ReserUIS</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="mainHeader">
+    <h1>Gestión de Espacios</h1>
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="#">Reservas</a></li>
+        <li><a href="#">Reportes</a></li>
+        <li><a href="#">Salir</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="formSection">
+    <form id="spaceForm">
+      <h2>Crear / Editar Espacio</h2>
+
+      <label for="spaceName">Nombre del espacio:</label>
+      <input type="text" id="spaceName" name="spaceName" placeholder="Ej: Coliseo" required>
+
+      <label for="spaceDescription">Descripción del espacio:</label>
+      <textarea id="spaceDescription" name="spaceDescription" placeholder="Descripción general del espacio"></textarea>
+
+      <label for="roomName">Nombre de la sala:</label>
+      <input type="text" id="roomName" name="roomName" placeholder="Ej: Sala Yoga" required>
+
+      <label for="roomDescription">Descripción de la sala:</label>
+      <textarea id="roomDescription" name="roomDescription" placeholder="Descripción detallada de la sala"></textarea>
+
+      <label for="capacity">Capacidad:</label>
+      <input type="number" id="capacity" name="capacity" min="1" required>
+
+      <label for="startTime">Hora de inicio:</label>
+      <input type="time" id="startTime" name="startTime" required>
+
+      <label for="endTime">Hora final:</label>
+      <input type="time" id="endTime" name="endTime" required>
+
+      <button type="submit">Guardar</button>
+      <button type="reset">Limpiar</button>
+    </form>
+
+    <section class="listSection">
+      <h2>Espacios Registrados</h2>
+      <ul id="spaceList">
+        <!-- Aquí se cargarán dinámicamente los espacios -->
+      </ul>
+    </section>
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

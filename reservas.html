@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reservas | ReserUIS</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="mainHeader">
+    <h1>Visualización de Reservas</h1>
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="gestionEspacios.html">Gestión</a></li>
+        <li><a href="#">Reportes</a></li>
+        <li><a href="#">Salir</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="reservaMain">
+    <section class="formReserva">
+      <h2>Reservar cita</h2>
+      <form id="reservaForm">
+        <label for="reservaDate">Fecha:</label>
+        <input type="date" id="reservaDate" name="reservaDate" required />
+
+        <label for="reservaTime">Horario disponible:</label>
+        <select id="reservaTime" name="reservaTime" required>
+          <option value="">Seleccionar hora</option>
+          <option value="07:00">7:00 AM</option>
+          <option value="08:00">8:00 AM</option>
+          <option value="09:00">9:00 AM</option>
+          <option value="14:00">2:00 PM</option>
+          <option value="15:00">3:00 PM</option>
+          <option value="16:00">4:00 PM</option>
+          <option value="17:00">5:00 PM</option>
+        </select>
+
+        <label for="reservaCode">Código:</label>
+        <input type="text" id="reservaCode" name="reservaCode" placeholder="Código del usuario" required />
+
+        <label for="reservaEspacio">Espacio:</label>
+        <select id="reservaEspacio" name="reservaEspacio" required>
+          <option value="">Seleccionar espacio</option>
+          <option value="COLISEO">COLISEO</option>
+          <option value="CANCHAS">CANCHAS</option>
+          <option value="BIBLIOTECA">BIBLIOTECA</option>
+          <option value="CENTIC">CENTIC</option>
+        </select>
+
+        <label for="reservaSala">Sala:</label>
+        <input type="text" id="reservaSala" name="reservaSala" placeholder="Nombre sala" required />
+
+        <button type="submit">Reservar</button>
+      </form>
+    </section>
+
+    <section class="calendarSection">
+      <h2>Reservas del mes</h2>
+      <div class="calendarPlaceholder">
+        <!-- Aquí va un calendario más adelante -->
+        <p>[Calendario o tabla de reservas irá aquí]</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
