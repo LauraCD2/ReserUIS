@@ -22,7 +22,7 @@ Sistema de reservas de espacios de la Universidad Industrial de Santander. Este 
 
 ## 📁 Estructura del proyecto
 
-```bash
+```
 reseruis/
 ├── index.html               # Pantalla de login
 ├── dashboard.html           # Tarjetas de espacios disponibles
@@ -38,3 +38,39 @@ reseruis/
 ├── assets/
 │   └── logo.png             # Imágenes, íconos u otros recursos
 └── README.md                # Documentación del proyecto
+```
+
+---
+
+## ▶️ Cómo usar este proyecto localmente
+
+1. Clona este repositorio:
+```bash
+git clone https://github.com/tuusuario/reseruis.git
+```
+
+2. Abre la carpeta en Visual Studio Code:
+```bash
+cd reseruis
+code .
+```
+
+3. Instala la extensión **Live Server** en VS Code (si no la tienes).
+
+4. Haz clic derecho en `index.html` → **"Open with Live Server"**  
+   Esto abrirá la app en tu navegador en `http://localhost:5500/` (u otro puerto).
+
+---
+
+## ⚠️ Notas importantes
+
+- La fuente `Humanist521` está integrada localmente.
+- El proyecto usa **camelCase** para todos los IDs, clases y nombres de variables.
+
+---
+
+## 🚧 Pendiente
+
+- [ ] Conexión real con backend (login, CRUD de reservas, etc.)
+- [ ] Reportes y gráficas con datos dinámicos
+- [ ] Validaciones y feedback visual en formularios
