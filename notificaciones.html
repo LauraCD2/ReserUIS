@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Notificaciones | ReserUIS</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body, h1, p, a {
+      font-family: 'Humanist521', sans-serif;
+    }
+
+    h1 {
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    .notificacionesWrapper {
+      padding: 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .notificacion {
+      background-color: #f4f4f4;
+      padding: 1rem 1.5rem;
+      border-left: 5px solid #b30000;
+      margin-bottom: 1rem;
+      border-radius: 6px;
+      color: #333;
+    }
+
+    .notificacion strong {
+      font-weight: 700;
+    }
+
+    header.mainHeader {
+      background-color: #045D18;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header.mainHeader nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    header.mainHeader nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <header class="mainHeader">
+    <h1>Notificaciones</h1>
+    <nav>
+      <ul>
+        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="gestionEspacios.html">Gestión</a></li>
+        <li><a href="reservas.html">Reservas</a></li>
+        <li><a href="historial.html">Historial</a></li>
+        <li><a href="#">Salir</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="notificacionesWrapper">
+    <div class="notificacion">
+      Se notifica que la sala de <strong>GIMNASIO</strong> del espacio <strong>COLISEO</strong> en el horario de <strong>2:00 PM</strong> en la fecha <strong>4/28/2025</strong> ha sido <strong>cancelada</strong>.
+    </div>
+    <div class="notificacion">
+      Se notifica que la sala de <strong>SALA YOGA</strong> del espacio <strong>COLISEO</strong> en el horario de <strong>5:00 PM</strong> en la fecha <strong>4/29/2025</strong> ha sido <strong>cancelada</strong>.
+    </div>
+    <div class="notificacion">
+      Se notifica que la sala de <strong>SALA BICICLETAS</strong> del espacio <strong>COLISEO</strong> en el horario de <strong>8:00 AM</strong> en la fecha <strong>5/29/2024</strong> ha sido <strong>reservada</strong>.
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
