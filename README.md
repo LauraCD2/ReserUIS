@@ -16,7 +16,6 @@ Sistema de reservas de espacios de la Universidad Industrial de Santander. Este 
 - HTML5, CSS3 y JavaScript
 - Tipografía institucional `Humanist521` integrada vía `@font-face`
 - Layout responsive básico con Flexbox y Grid
-- Estilo visual fiel al diseño institucional proporcionado (PDF)
 
 ---
 
