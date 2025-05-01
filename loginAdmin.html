@@ -1,0 +1,40 @@
+from pathlib import Path
+
+admin_login_html = """
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Login | ReserUIS</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="loginWrapper">
+    <div class="leftPanel">
+      <h1><span class="reser">RESER</span><span class="uis">UIS</span></h1>
+      <p>Gestión de reservas para administradores del sistema.</p>
+    </div>
+
+    <div class="rightPanel">
+      <div class="adminBadge">ADMIN</div>
+      <h2>Iniciar Sesión</h2>
+      <form id="adminLoginForm">
+        <label for="adminCode">Código</label>
+        <input type="text" id="adminCode" name="adminCode" placeholder="Código administrador" required />
+
+        <label for="adminPassword">Contraseña</label>
+        <input type="password" id="adminPassword" name="adminPassword" placeholder="Contraseña" required />
+
+        <button type="submit">Iniciar Sesión</button>
+      </form>
+    </div>
+  </div>
+  <script src="js/main.js"></script>
+</body>
+</html>
+"""
+
+admin_path = Path("/mnt/data/loginAdmin.html")
+admin_path.write_text(admin_login_html.strip(), encoding="utf-8")
+admin_path.name

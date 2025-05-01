@@ -62,7 +62,6 @@
   font-display: swap;
 }
 
-/* Opcionales: condensadas */
 @font-face {
   font-family: 'Humanist521 Condensed';
   src: url('../fonts/Humanist521BT-RomanCondensed.woff2') format('woff2');
@@ -87,12 +86,15 @@
   font-display: swap;
 }
 
-
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Humanist521', sans-serif;
   background-color: #fff;
+}
+
+*, *::before, *::after {
+  font-family: 'Humanist521', sans-serif !important;
 }
 
 .loginWrapper {
@@ -152,6 +154,7 @@ body {
   font-weight: bold;
   padding: 0.4rem 1rem;
   border-radius: 5px;
+  text-decoration: none;
 }
 
 .rightPanel h2 {
