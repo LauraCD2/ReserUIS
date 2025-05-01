@@ -2,7 +2,7 @@
 
 Sistema de reservas de espacios de la Universidad Industrial de Santander. Este proyecto permite a estudiantes, docentes y administrativos:
 
-- Iniciar sesión según su rol (estudiante, profesor, administrativo o administrador)
+- Iniciar sesión según su rol (estudiante, profesor, administrativo o admin)
 - Visualizar espacios como el Coliseo, biblioteca, salas de entrenamiento, etc.
 - Reservar salas en horarios disponibles
 - Crear, editar y listar espacios y salas
