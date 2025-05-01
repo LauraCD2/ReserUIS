@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Sesión Cerrada | ReserUIS</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body {
+      font-family: 'Humanist521', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f8f8f8;
+    }
+
+    .logoutContainer {
+      text-align: center;
+      background-color: white;
+      padding: 3rem 4rem;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .logoutContainer h1 {
+      color: #045D18;
+      margin-bottom: 1rem;
+    }
+
+    .logoutContainer p {
+      color: #555;
+      font-size: 1rem;
+    }
+  </style>
+  <script>
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 3000); // redirige en 3 segundos
+  </script>
+</head>
+<body>
+  <div class="logoutContainer">
+    <h1>Sesión cerrada</h1>
+    <p>Serás redirigido al inicio de sesión en unos segundos...</p>
+  </div>
+</body>
+</html>
