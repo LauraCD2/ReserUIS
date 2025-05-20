@@ -11,10 +11,10 @@ app.use(express.json());
 
 // Conexión a PostgreSQL
 const pool = new Pool({
-  user: 'server_software_user',      
-  host: 'dpg-d020thngi27c73f4060g-a.oregon-postgres.render.com',
-  database: 'server_software',     
-  password: 'DLYxGq4oon2ewgF3JdYFB2P8mxTJYwyn', 
+  user: 'server_software_fszj_user',      
+  host: 'dpg-d0lv40h5pdvs738o6o0g-a.oregon-postgres.render.com',
+  database: 'server_software_fszj',     
+  password: 'ldEBJuS3fzJ8VNWcSD4PyefbXPwc68vX', 
   port: 5432,
   ssl: {
     rejectUnauthorized: false, 
