@@ -18,17 +18,17 @@ const addTipoEspacio = async (tipoEspacio) => {
 };
 
 // Eliminar un tipo de espacio por ID
-const deleteTipoEspacio = async (id) => {
-    const query = 'DELETE FROM tipo_espacio WHERE id = $1 RETURNING *';
-    const values = [id];
+const deleteTipoEspacio = async (id_tipo_espacio) => {
+    const query = 'DELETE FROM tipo_espacio WHERE id_tipo_espacio = $1 RETURNING *';
+    const values = [id_tipo_espacio];
     const result = await db.query(query, values);
     return result.rows[0];
 };
 
 // Actualizar un tipo de espacio por ID
-const updateTipoEspacio = async (id, tipoEspacio) => {
-    const query = 'UPDATE tipo_espacio SET nombre = $1 WHERE id = $2 RETURNING *';
-    const values = [tipoEspacio.nombre, id];
+const updateTipoEspacio = async (id_tipo_espacio, tipoEspacio) => {
+    const query = 'UPDATE tipo_espacio SET nombre = $1 WHERE id_tipo_espacio = $2 RETURNING *';
+    const values = [tipoEspacio.nombre, id_tipo_espacio];
     const result = await db.query(query, values);
     return result.rows[0];
 };

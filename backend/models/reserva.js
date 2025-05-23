@@ -12,25 +12,25 @@ const getReservas = async () => {
 
 // Add a new reserva
 const addReserva = async (reservaData) => {
-    const { espacioId, usuarioId, fecha, horaInicio, horaFin } = reservaData;
-    const query = 'INSERT INTO reserva (espacio_id, usuario_id, fecha, hora_inicio, hora_fin) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-    const values = [espacioId, usuarioId, fecha, horaInicio, horaFin];
+    const { id_espacio, id_usuario, fecha, hora_inicio, hora_fin } = reservaData;
+    const query = 'INSERT INTO reserva (id_espacio, id_usuario, fecha, hora_inicio, hora_fin) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+    const values = [id_espacio, id_usuario, fecha, hora_inicio, hora_fin];
     const result = await db.query(query, values);
     return result.rows[0];
 };
 
 // Delete a reserva by ID
-const deleteReserva = async (id) => {
-    const query = 'DELETE FROM reserva WHERE id = $1 RETURNING *';
-    const result = await db.query(query, [id]);
+const deleteReserva = async (id_reserva) => {
+    const query = 'DELETE FROM reserva WHERE id_reserva = $1 RETURNING *';
+    const result = await db.query(query, [id_reserva]);
     return result.rows[0];
 };
 
 // Update a reserva by ID
-const updateReserva = async (id, reservaData) => {
-    const { espacioId, usuarioId, fecha, horaInicio, horaFin } = reservaData;
-    const query = 'UPDATE reserva SET espacio_id = $1, usuario_id = $2, fecha = $3, hora_inicio = $4, hora_fin = $5 WHERE id = $6 RETURNING *';
-    const values = [espacioId, usuarioId, fecha, horaInicio, horaFin, id];
+const updateReserva = async (id_reserva, reservaData) => {
+    const { id_espacio, id_usuario, fecha, hora_inicio, hora_fin } = reservaData;
+    const query = 'UPDATE reserva SET id_espacio = $1, id_usuario = $2, fecha = $3, hora_inicio = $4, hora_fin = $5 WHERE id_reserva = $6 RETURNING *';
+    const values = [id_espacio, id_usuario, fecha, hora_inicio, hora_fin, id_reserva];
     const result = await db.query(query, values);
     return result.rows[0];
 };

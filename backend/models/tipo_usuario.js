@@ -15,16 +15,16 @@ const addTipoUsuario = async (tipoUsuario) => {
     return result.rows[0];
 };
 
-const deleteTipoUsuario = async (id) => {
-    const query = 'DELETE FROM tipo_usuario WHERE id = $1 RETURNING *';
-    const values = [id];
+const deleteTipoUsuario = async (id_tipo_usuario) => {
+    const query = 'DELETE FROM tipo_usuario WHERE id_tipo_usuario = $1 RETURNING *';
+    const values = [id_tipo_usuario];
     const result = await db.query(query, values);
     return result.rows[0];
 };
 
-const updateTipoUsuario = async (id, tipoUsuario) => {
-    const query = 'UPDATE tipo_usuario SET nombre = $1 WHERE id = $2 RETURNING *';
-    const values = [tipoUsuario.nombre, id];
+const updateTipoUsuario = async (id_tipo_usuario, tipoUsuario) => {
+    const query = 'UPDATE tipo_usuario SET nombre = $1 WHERE id_tipo_usuario = $2 RETURNING *';
+    const values = [tipoUsuario.nombre, id_tipo_usuario];
     const result = await db.query(query, values);
     return result.rows[0];
 };

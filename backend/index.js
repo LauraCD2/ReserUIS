@@ -32,6 +32,26 @@ app.get('/', async (req, res) => {
   }
 });
 
+// Endpoint de login
+app.post('/api/login', async (req, res) => {
+  const { code, password, id_tipo_usuario } = req.body;
+  try {
+    // Buscar usuario por código, contraseña y tipo
+    const result = await pool.query(
+      `SELECT * FROM usuario WHERE codigo = $1 AND password = $2 AND id_tipo_usuario = $3`,
+      [code, password, id_tipo_usuario]
+    );
+    if (result.rows.length > 0) {
+      res.json({ success: true, user: result.rows[0] });
+    } else {
+      res.status(401).json({ success: false, message: 'Código o contraseña incorrectos' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error en la base de datos' });
+  }
+});
+
 // Iniciar servidor
 app.listen(port, () => {
   console.log(`Servidor backend escuchando en http://localhost:${port}`);
