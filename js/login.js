@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
       if (response.ok && data.success) {
         errorDiv.style.display = 'none';
-        window.location.href = 'gestionEspacios.html';
+        window.location.href = 'espacios.html';
       } else {
         errorDiv.textContent = data.message || 'Código o contraseña incorrectos';
         errorDiv.style.display = 'block';

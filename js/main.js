@@ -9,7 +9,6 @@ document.getElementById("loginForm").addEventListener("submit", function (e) {
     // Aquí irá la conexión al backend con fetch() o axios
     console.log("Login enviado:", { userRole, username, password, code });
   
-    // Redirigir a dashboard si es exitoso (placeholder)
-    // window.location.href = "dashboard.html";
+    // Redirigir a espacios si es exitoso (placeholder)
+    // window.location.href = "espacios.html";
   });
-  

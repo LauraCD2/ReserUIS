@@ -59,16 +59,22 @@
       margin-bottom: 1.5rem;
     }
 
-    .salaCard button {
-      padding: 0.6rem 1.2rem;
+    .reserveButtonContainer {
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    .reserveButton {
+      padding: 0.8rem 1.6rem;
       background-color: #045D18;
       color: white;
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      font-size: 1rem;
     }
 
-    .salaCard button:hover {
+    .reserveButton:hover {
       background-color: #063e12;
     }
   </style>
@@ -78,7 +84,7 @@
     <h1>Salas deportivas - CANCHAS</h1>
     <nav>
       <ul>
-        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="espacios.html">Espacios</a></li>
         <li><a href="reservas.html">Reservas</a></li>
         <li><a href="logout.html">Salir</a></li>
       </ul>
@@ -89,54 +95,47 @@
     <div class="salaCard">
       <h2>Fútbol</h2>
       <p>Cancha de fútbol ubicada en el Campus Central y UIS Sur.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=Fútbol&espacio=CANCHAS'">Reservar</button>
     </div>
     <div class="salaCard">
       <h2>Tenis</h2>
       <p>Canchas de tenis disponibles en el Campus Central.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=Tenis&espacio=CANCHAS'">Reservar</button>
     </div>
     <div class="salaCard">
       <h2>Squash</h2>
       <p>Dos canchas con dimensiones profesionales.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=Squash&espacio=CANCHAS'">Reservar</button>
     </div>
     <div class="salaCard">
       <h2>Voleibol</h2>
       <p>Cancha de arena y piso duro disponibles.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=Voleibol&espacio=CANCHAS'">Reservar</button>
     </div>
     <div class="salaCard">
       <h2>Baloncesto</h2>
       <p>Canchas en el Campus Central y el Coliseo.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=Baloncesto&espacio=CANCHAS'">Reservar</button>
     </div>
     <div class="salaCard">
       <h2>Softbol</h2>
       <p>Diamante de softbol ubicado en el Campus Central.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=Softbol&espacio=CANCHAS'">Reservar</button>
     </div>
     <div class="salaCard">
       <h2>Canchas Múltiples</h2>
       <p>Recientemente modernizadas en el Campus Central.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=Canchas Múltiples&espacio=CANCHAS'">Reservar</button>
     </div>
     <div class="salaCard">
       <h2>Estadio Primero de Marzo</h2>
       <p>Cancha de fútbol y pista atlética de 8 carriles.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=Estadio Primero de Marzo&espacio=CANCHAS'">Reservar</button>
     </div>
     <div class="salaCard">
       <h2>Skate Park</h2>
       <p>Zona de patinaje en el campus.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=Skate Park&espacio=CANCHAS'">Reservar</button>
     </div>
     <div class="salaCard">
       <h2>Mesas de Teqball</h2>
       <p>Frente a la entrada del Estadio Primero de Marzo.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=Teqball&espacio=CANCHAS'">Reservar</button>
     </div>
   </main>
+  <div class="reserveButtonContainer">
+    <button onclick="window.location.href='reservas.html'" class="reserveButton">Reservar espacio</button>
+  </div>
 
   <script src="js/main.js"></script>
 </body>

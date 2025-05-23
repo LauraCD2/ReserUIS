@@ -71,6 +71,27 @@
     .salaCard button:hover {
       background-color: #063e12;
     }
+
+    .reserveButtonContainer {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .reserveButton {
+      padding: 1rem 2.5rem;
+      font-size: 1.2rem;
+      background-color: #045D18;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .reserveButton:hover {
+      background-color: #063e12;
+    }
   </style>
 </head>
 <body>
@@ -78,7 +99,7 @@
     <h1>Sala del COLISEO</h1>
     <nav>
       <ul>
-        <li><a href="dashboard.html">Dashboard</a></li>
+        <li><a href="espacios.html">Espacios</a></li>
         <li><a href="reservas.html">Reservas</a></li>
         <li><a href="logout.html">Salir</a></li>
       </ul>
@@ -88,20 +109,23 @@
   <main class="salaContainer">
     <div class="salaCard">
       <h2>GIMNASIO</h2>
+      <img src="assets/salas_coliseo/gimnasio.jpg" alt="Gimnasio" style="width:100%;max-width:220px;border-radius:8px;margin-bottom:1rem;" />
       <p>Espacio cerrado con maquinaria de ejercicio y entrenamiento funcional.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=GIMNASIO&espacio=COLISEO'">Reservar</button>
     </div>
     <div class="salaCard">
-      <h2>SALA YOGA</h2>
-      <p>Ambiente tranquilo y cerrado, ideal para clases de yoga o meditación.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=SALA YOGA&espacio=COLISEO'">Reservar</button>
+      <h2>LAB ESFUERZO FISICO</h2>
+      <img src="assets/salas_coliseo/lab_esfuerzo.png" alt="Laboratorio" style="width:100%;max-width:220px;border-radius:8px;margin-bottom:1rem;" />
+      <p>Sus equipos están destinados a examinar movimientos y capacidades cardiovasculares, cardiorrespiratorias y musculo-esqueléticas de los deportistas.</p>
     </div>
     <div class="salaCard">
       <h2>SALA SPINNING</h2>
+      <img src="assets/salas_coliseo/spinning.png" alt="Sala Spinning" style="width:100%;max-width:220px;border-radius:8px;margin-bottom:1rem;" />
       <p>Sala equipada para entrenamiento cardiovascular tipo spinning.</p>
-      <button onclick="window.location.href='reservaSala.html?sala=SALA SPINNING&espacio=COLISEO'">Reservar</button>
     </div>
   </main>
+  <div class="reserveButtonContainer">
+    <button onclick="window.location.href='reservas.html'" class="reserveButton">Reservar espacio</button>
+  </div>
 
   <script src="js/main.js"></script>
 </body>

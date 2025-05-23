@@ -34,7 +34,7 @@ Sistema de reservas de espacios de la Universidad Industrial de Santander. Este 
 ```
 reseruis/
 ├── index.html                 # Pantalla de login
-├── dashboard.html             # Tarjetas de espacios disponibles
+├── espacios.html                 # Tarjetas de espacios disponibles
 ├── gestionEspacios.html       # Formulario de creación y edición de espacios/salas
 ├── reservas.html              # Formulario de reservas y calendario
 ├── historial.html             # Listado de historial de reservas
