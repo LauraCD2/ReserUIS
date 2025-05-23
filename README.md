@@ -36,7 +36,6 @@ reseruis/
 ├── index.html                 # Pantalla de login
 ├── espacios.html                 # Tarjetas de espacios disponibles
 ├── gestionEspacios.html       # Formulario de creación y edición de espacios/salas
-├── reservas.html              # Formulario de reservas y calendario
 ├── historial.html             # Listado de historial de reservas
 ├── notificaciones.html        # Alertas por cancelación o confirmación
 ├── logout.html                # Cierre de sesión con redirección automática
@@ -44,7 +43,10 @@ reseruis/
 ├── seleccionarSalaCanchas.html   # Salas deportivas tipo canchas (fútbol, squash, etc.)
 ├── seleccionarSalaBiblioteca.html   # Salas de la Biblioteca para reservar
 ├── seleccionarSalaCENTIC.html   # Salas del CENTIC para reservar
-├── reservaSala.html           # Formulario final para reservar una sala
+├── reservasColiseo.html        # Reservas para espacios del Coliseo
+├── reservasCanchas.html        # Reservas para espacios de Canchas
+├── reservasBiblioteca.html     # Reservas para espacios de Biblioteca
+├── reservasCENTIC.html         # Reservas para espacios de CENTIC
 ├── css/
 │   └── styles.css             # Estilos globales, con fuente institucional
 ├── js/
