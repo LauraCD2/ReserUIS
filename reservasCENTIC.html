@@ -55,6 +55,7 @@
         </select>
         <button type="submit">Reservar</button>
       </form>
+      <div id="reservaMsgCENTIC" style="margin-top:10px;font-weight:bold;display:none;position:relative;"></div>
     </section>
     <section class="calendarSection">
       <h2>Reservas del mes</h2>
@@ -64,5 +65,79 @@
     </section>
   </main>
   <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const form = document.getElementById('reservaFormCENTIC');
+      const msgDiv = document.getElementById('reservaMsgCENTIC');
+      if (form) {
+        form.addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const espacioMap = {
+            sala: 17,
+            auditorio: 18
+          };
+          let id_usuario = localStorage.getItem('id_usuario');
+          if (id_usuario) id_usuario = parseInt(id_usuario);
+          const fechaInput = document.getElementById('reservaDate').value;
+          const fecha = fechaInput ? new Date(fechaInput).toISOString().slice(0, 10) : '';
+          const hora_inicio = document.getElementById('reservaHoraInicio').value.padEnd(8, ':00');
+          const hora_fin = document.getElementById('reservaHoraFin').value.padEnd(8, ':00');
+          const espacio = document.getElementById('reservaEspacio').value;
+          const id_espacio = espacioMap[espacio];
+          msgDiv.textContent = '';
+          msgDiv.style.color = 'black';
+          msgDiv.style.display = 'none';
+          if (!id_usuario) {
+            mostrarMensaje('No hay usuario autenticado. Inicie sesión.', 'red');
+            return;
+          }
+          if (!id_espacio) {
+            mostrarMensaje('Seleccione un espacio válido.', 'red');
+            return;
+          }
+          if (!hora_inicio || !hora_fin) {
+            mostrarMensaje('Debe seleccionar hora de inicio y fin.', 'red');
+            return;
+          }
+          if (hora_fin <= hora_inicio) {
+            mostrarMensaje('La hora de fin debe ser mayor que la de inicio.', 'red');
+            return;
+          }
+          try {
+            const response = await fetch('http://localhost:3001/api/reservas', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                id_espacio,
+                id_usuario,
+                fecha,
+                hora_inicio,
+                hora_fin
+              })
+            });
+            const data = await response.json();
+            if (response.ok && data.success) {
+              mostrarMensaje('Reserva realizada con éxito', 'green', true);
+              form.reset();
+            } else {
+              mostrarMensaje(data.message || 'No se pudo realizar la reserva', 'red');
+            }
+          } catch (err) {
+            mostrarMensaje('Error de conexión con el servidor', 'red');
+          }
+        });
+      }
+      function mostrarMensaje(msg, color, exito = false) {
+        msgDiv.innerHTML = `<span>${msg}</span><button id='cerrarMsgCENTIC' style='position:absolute;right:8px;top:4px;background:none;border:none;font-size:1.2em;cursor:pointer;'>&times;</button>`;
+        msgDiv.style.color = color;
+        msgDiv.style.display = 'block';
+        msgDiv.style.background = exito ? '#e6ffe6' : '#fff0f0';
+        msgDiv.style.border = exito ? '1px solid #2ecc40' : '1px solid #e74c3c';
+        document.getElementById('cerrarMsgCENTIC').onclick = function() {
+          msgDiv.style.display = 'none';
+        };
+      }
+    });
+  </script>
 </body>
 </html>

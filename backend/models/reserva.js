@@ -13,8 +13,9 @@ const getReservas = async () => {
 // Add a new reserva
 const addReserva = async (reservaData) => {
     const { id_espacio, id_usuario, fecha, hora_inicio, hora_fin } = reservaData;
-    const query = 'INSERT INTO reserva (id_espacio, id_usuario, fecha, hora_inicio, hora_fin) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-    const values = [id_espacio, id_usuario, fecha, hora_inicio, hora_fin];
+    // El insert debe ser en el orden correcto: id_usuario, id_espacio, fecha, hora_inicio, hora_fin
+    const query = 'INSERT INTO reserva (id_usuario, id_espacio, fecha, hora_inicio, hora_fin) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+    const values = [id_usuario, id_espacio, fecha, hora_inicio, hora_fin];
     const result = await db.query(query, values);
     return result.rows[0];
 };
@@ -35,9 +36,25 @@ const updateReserva = async (id_reserva, reservaData) => {
     return result.rows[0];
 };
 
+// Obtener reservas con detalles completos para historial de un usuario
+const getReservasConDetallesPorUsuario = async (id_usuario) => {
+    const query = `
+        SELECT r.fecha, te.nombre AS tipo_espacio, e.nombre AS sala, u.nombre AS usuario, r.hora_inicio, r.hora_fin
+        FROM reserva r
+        JOIN espacio e ON r.id_espacio = e.id_espacio
+        JOIN tipo_espacio te ON e.id_tipo_espacio = te.id_tipo_espacio
+        JOIN usuario u ON r.id_usuario = u.id_usuario
+        WHERE CAST(r.id_usuario AS TEXT) = $1
+        ORDER BY r.fecha DESC, r.hora_inicio DESC
+    `;
+    const result = await db.query(query, [id_usuario]);
+    return result.rows;
+};
+
 module.exports = {
     getReservas,
     addReserva,
     deleteReserva,
-    updateReserva
+    updateReserva,
+    getReservasConDetallesPorUsuario
 };

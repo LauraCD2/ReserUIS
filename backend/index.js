@@ -66,6 +66,22 @@ app.post('/api/reservas', async (req, res) => {
   }
 });
 
+// Endpoint para obtener todas las reservas de un usuario
+app.get('/api/reservas', async (req, res) => {
+  try {
+    const id_usuario = req.query.id_usuario;
+    console.log('Historial solicitado para id_usuario:', id_usuario);
+    if (!id_usuario) {
+      return res.status(400).json({ success: false, message: 'id_usuario es requerido' });
+    }
+    const reservas = await reservaModel.getReservasConDetallesPorUsuario(id_usuario);
+    res.json({ success: true, reservas });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al obtener las reservas' });
+  }
+});
+
 // Iniciar servidor
 app.listen(port, () => {
   console.log(`Servidor backend escuchando en http://localhost:${port}`);
