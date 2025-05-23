@@ -74,6 +74,97 @@
       text-decoration: none;
       font-weight: 700;
     }
+
+    /* Estilos para el modal de cancelación */
+    #modalCancelar {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #modalCancelar .contenidoModal {
+      background: #fff;
+      padding: 2rem 2.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px #0002;
+      min-width: 320px;
+      position: relative;
+    }
+
+    #modalCancelar button {
+      cursor: pointer;
+    }
+
+    #modalCancelar #cerrarModalCancelar {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 1.5em;
+    }
+
+    #modalCancelar h3 {
+      margin-top: 0;
+    }
+
+    #modalCancelar .acciones {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 2rem;
+    }
+
+    #modalCancelar .acciones button {
+      padding: 0.5rem 1.2rem;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    #modalCancelar #btnCancelarConfirmar {
+      background: #b30000;
+      color: #fff;
+    }
+
+    #modalCancelar #btnCancelarCerrar {
+      background: #bbb;
+      color: #222;
+    }
+
+    /* Estilos para el mensaje flotante */
+    #ventanaMensajeHistorial {
+      display: none;
+      position: fixed;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border: 2px solid #045D18;
+      box-shadow: 0 2px 12px #0003;
+      padding: 1.2rem 2.2rem;
+      z-index: 2000;
+      border-radius: 10px;
+      min-width: 260px;
+      max-width: 90vw;
+    }
+
+    #cerrarVentanaMensajeHistorial {
+      position: absolute;
+      top: 8px;
+      right: 14px;
+      font-size: 1.3em;
+      cursor: pointer;
+      font-weight: bold;
+      color: #045D18;
+    }
   </style>
 </head>
 <body>
@@ -95,10 +186,27 @@
       <div>Espacio</div>
       <div>Sala</div>
       <div>Horario</div>
-      <div>Estado</div>
+      <div>Acción</div>
     </div>
     <!-- Las filas de reservas reales se insertarán dinámicamente por historial.js -->
   </main>
+
+  <!-- Mensaje flotante para feedback de cancelación -->
+  <div id="ventanaMensajeHistorial" style="display:none;position:fixed;top:40px;left:50%;transform:translateX(-50%);background:#fff;border:2px solid #045D18;box-shadow:0 2px 12px #0003;padding:1.2rem 2.2rem;z-index:2000;border-radius:10px;min-width:260px;max-width:90vw;">
+    <span id="cerrarVentanaMensajeHistorial" style="position:absolute;top:8px;right:14px;font-size:1.3em;cursor:pointer;font-weight:bold;color:#045D18;">&times;</span>
+    <span id="textoVentanaMensajeHistorial"></span>
+  </div>
+
+  <!-- Modal para confirmar cancelación de reserva -->
+  <div id="modalCancelar">
+    <div class="contenidoModal">
+      <h3>¿Estás seguro de cancelar tu reserva?</h3>
+      <div class="acciones" style="display:flex;gap:1.5rem;justify-content:center;margin-top:2rem;">
+        <button id="btnCancelarConfirmar">Aceptar</button>
+        <button id="btnCancelarCerrar">Cancelar</button>
+      </div>
+    </div>
+  </div>
 
   <script src="js/historial.js"></script>
 </body>

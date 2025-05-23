@@ -20,8 +20,15 @@ const addReserva = async (reservaData) => {
     return result.rows[0];
 };
 
-// Delete a reserva by ID
-const deleteReserva = async (id_reserva) => {
+// Eliminar una reserva por id_espacio
+const deleteReservaPorEspacio = async (id_espacio) => {
+    const query = 'DELETE FROM reserva WHERE id_espacio = $1 RETURNING *';
+    const result = await db.query(query, [id_espacio]);
+    return result.rows[0];
+};
+
+// Eliminar una reserva por id_reserva
+const deleteReservaPorId = async (id_reserva) => {
     const query = 'DELETE FROM reserva WHERE id_reserva = $1 RETURNING *';
     const result = await db.query(query, [id_reserva]);
     return result.rows[0];
@@ -39,7 +46,7 @@ const updateReserva = async (id_reserva, reservaData) => {
 // Obtener reservas con detalles completos para historial de un usuario
 const getReservasConDetallesPorUsuario = async (id_usuario) => {
     const query = `
-        SELECT r.fecha, te.nombre AS tipo_espacio, e.nombre AS sala, u.nombre AS usuario, r.hora_inicio, r.hora_fin
+        SELECT r.id_reserva, r.id_espacio, r.fecha, te.nombre AS tipo_espacio, e.nombre AS sala, u.nombre AS usuario, r.hora_inicio, r.hora_fin
         FROM reserva r
         JOIN espacio e ON r.id_espacio = e.id_espacio
         JOIN tipo_espacio te ON e.id_tipo_espacio = te.id_tipo_espacio
@@ -54,7 +61,8 @@ const getReservasConDetallesPorUsuario = async (id_usuario) => {
 module.exports = {
     getReservas,
     addReserva,
-    deleteReserva,
     updateReserva,
-    getReservasConDetallesPorUsuario
+    getReservasConDetallesPorUsuario,
+    deleteReservaPorEspacio,
+    deleteReservaPorId 
 };

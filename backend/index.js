@@ -75,10 +75,43 @@ app.get('/api/reservas', async (req, res) => {
       return res.status(400).json({ success: false, message: 'id_usuario es requerido' });
     }
     const reservas = await reservaModel.getReservasConDetallesPorUsuario(id_usuario);
+    console.log('RESERVAS ENVIADAS AL FRONT:', reservas); // DEPURACIÓN
     res.json({ success: true, reservas });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Error al obtener las reservas' });
+  }
+});
+
+// Endpoint para eliminar una reserva por id_espacio
+app.delete('/api/reservas/espacio/:id_espacio', async (req, res) => {
+  try {
+    const id_espacio = req.params.id_espacio;
+    const deleted = await reservaModel.deleteReservaPorEspacio(id_espacio);
+    if (deleted) {
+      res.json({ success: true, message: 'Reserva eliminada' });
+    } else {
+      res.status(404).json({ success: false, message: 'Reserva no encontrada' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al eliminar la reserva' });
+  }
+});
+
+// Endpoint para eliminar una reserva por id_reserva
+app.delete('/api/reservas/:id_reserva', async (req, res) => {
+  const { id_reserva } = req.params;
+  try {
+    const deleted = await require('./models/reserva').deleteReservaPorId(id_reserva);
+    if (deleted) {
+      res.json({ success: true, reserva: deleted });
+    } else {
+      res.status(404).json({ success: false, message: 'Reserva no encontrada.' });
+    }
+  } catch (err) {
+    console.error('Error al eliminar reserva:', err);
+    res.status(500).json({ success: false, message: 'Error del servidor al eliminar reserva.' });
   }
 });
 
