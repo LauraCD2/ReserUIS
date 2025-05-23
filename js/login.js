@@ -26,6 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
       if (response.ok && data.success) {
         errorDiv.style.display = 'none';
+        // Guardar id_usuario en localStorage
+        localStorage.setItem('id_usuario', data.user.id_usuario);
         window.location.href = 'espacios.html';
       } else {
         errorDiv.textContent = data.message || 'Código o contraseña incorrectos';

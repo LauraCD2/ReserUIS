@@ -40,8 +40,10 @@ reseruis/
 ├── historial.html             # Listado de historial de reservas
 ├── notificaciones.html        # Alertas por cancelación o confirmación
 ├── logout.html                # Cierre de sesión con redirección automática
-├── seleccionarSala.html       # Salas del Coliseo para reservar
-├── reservarSalaCanchas.html   # Salas deportivas tipo canchas (fútbol, squash, etc.)
+├── seleccionarSalaColiseo.html       # Salas del Coliseo para reservar
+├── seleccionarSalaCanchas.html   # Salas deportivas tipo canchas (fútbol, squash, etc.)
+├── seleccionarSalaBiblioteca.html   # Salas de la Biblioteca para reservar
+├── seleccionarSalaCENTIC.html   # Salas del CENTIC para reservar
 ├── reservaSala.html           # Formulario final para reservar una sala
 ├── css/
 │   └── styles.css             # Estilos globales, con fuente institucional

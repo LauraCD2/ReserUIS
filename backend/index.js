@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+// Importar modelo de reserva
+const reservaModel = require('./models/reserva');
 
 const app = express();
 const port = 3001; // El backend correrá en el puerto 3001
@@ -49,6 +51,18 @@ app.post('/api/login', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Error en la base de datos' });
+  }
+});
+
+// Endpoint para crear una reserva
+app.post('/api/reservas', async (req, res) => {
+  try {
+    const { id_espacio, id_usuario, fecha, hora_inicio, hora_fin } = req.body;
+    const nuevaReserva = await reservaModel.addReserva({ id_espacio, id_usuario, fecha, hora_inicio, hora_fin });
+    res.status(201).json({ success: true, reserva: nuevaReserva });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al crear la reserva' });
   }
 });
 

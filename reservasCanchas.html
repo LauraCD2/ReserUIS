@@ -1,0 +1,65 @@
+<!-- Reservas Canchas -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reservas Canchas | ReserUIS</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header class="mainHeader">
+    <h1>Reservas Canchas</h1>
+    <nav>
+      <ul>
+        <li><a href="espacios.html">Espacios</a></li>
+        <li><a href="gestionEspacios.html">Gestión</a></li>
+        <li><a href="#">Reportes</a></li>
+        <li><a href="logout.html">Salir</a></li>
+        <li><a href="notificaciones.html">Notificaciones</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="reservaMain">
+    <section class="formReserva">
+      <h2>Reservar cita Canchas</h2>
+      <form id="reservaFormCanchas">
+        <label for="reservaDate">Fecha:</label>
+        <input type="date" id="reservaDate" name="reservaDate" required />
+        <label for="reservaTime">Horario disponible:</label>
+        <select id="reservaTime" name="reservaTime" required>
+          <option value="">Seleccionar hora</option>
+          <option value="07:00">7:00 AM</option>
+          <option value="08:00">8:00 AM</option>
+          <option value="09:00">9:00 AM</option>
+          <option value="14:00">2:00 PM</option>
+          <option value="15:00">3:00 PM</option>
+          <option value="16:00">4:00 PM</option>
+          <option value="17:00">5:00 PM</option>
+        </select>
+        <label for="reservaEspacio">Espacio:</label>
+        <select id="reservaEspacio" name="reservaEspacio" required>
+          <option value="">Seleccionar espacio</option>
+          <option value="arena">Arena</option>
+          <option value="baloncesto">Baloncesto</option>
+          <option value="diamante">Diamante</option>
+          <option value="futbol">Fútbol</option>
+          <option value="primero_de_marzo">Primero de Marzo</option>
+          <option value="skatepark">Skatepark</option>
+          <option value="squash">Squash</option>
+          <option value="tenis">Tenis</option>
+          <option value="teqball">Teqball</option>
+          <option value="voleibol">Voleibol</option>
+        </select>
+        <button type="submit">Reservar</button>
+      </form>
+    </section>
+    <section class="calendarSection">
+      <h2>Reservas del mes</h2>
+      <div class="calendarPlaceholder">
+        <p>[Calendario o tabla de reservas irá aquí]</p>
+      </div>
+    </section>
+  </main>
+  <script src="js/main.js"></script>
+</body>
+</html>
