@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Seleccionar Sala | Biblioteca UIS</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body {
+      font-family: 'Humanist521', sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+    }
+    .mainHeader {
+      background-color: #045D18;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mainHeader nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      margin: 0;
+      padding: 0;
+    }
+    .mainHeader nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .salaContainer {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .salaCard {
+      background-color: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .salaCard h2 {
+      color: #045D18;
+      margin-bottom: 1rem;
+    }
+    .salaCard p {
+      color: #444;
+      margin-bottom: 1.5rem;
+    }
+    .salaCard .salaImgPlaceholder {
+      width: 100%;
+      max-width: 220px;
+      height: 140px;
+      background: #e0e0e0;
+      border-radius: 8px;
+      margin: 0 auto 1rem auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      font-size: 1rem;
+    }
+    .reserveButtonContainer {
+      text-align: center;
+      margin: 2rem 0;
+    }
+    .reserveButton {
+      padding: 0.8rem 1.6rem;
+      background-color: #045D18;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .reserveButton:hover {
+      background-color: #063e12;
+    }
+  </style>
+</head>
+<body>
+  <header class="mainHeader">
+    <h1>Salas - BIBLIOTECA</h1>
+    <nav>
+      <ul>
+        <li><a href="espacios.html">Espacios</a></li>
+        <li><a href="reservas.html">Reservas</a></li>
+        <li><a href="logout.html">Salir</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main class="salaContainer">
+    <div class="salaCard">
+      <h2>Sala de lectura</h2>
+      <div class="salaImgPlaceholder">Imagen aquí</div>
+      <p>Espacio tranquilo para la lectura individual o grupal.</p>
+    </div>
+    <div class="salaCard">
+      <h2>Cubículo individual</h2>
+      <div class="salaImgPlaceholder">Imagen aquí</div>
+      <p>Espacio privado para el estudio personal.</p>
+    </div>
+    <div class="salaCard">
+      <h2>Cubículo grupal</h2>
+      <div class="salaImgPlaceholder">Imagen aquí</div>
+      <p>Ideal para trabajos y reuniones en grupo.</p>
+    </div>
+  </main>
+  <div class="reserveButtonContainer">
+    <button onclick="window.location.href='reservas.html'" class="reserveButton">Reservar espacio</button>
+  </div>
+  <script src="js/main.js"></script>
+</body>
+</html>
