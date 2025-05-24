@@ -24,27 +24,16 @@
       <form id="reservaFormCENTIC">
         <label for="reservaDate">Fecha:</label>
         <input type="date" id="reservaDate" name="reservaDate" required />
-        <label for="reservaHoraInicio">Hora de inicio:</label>
-        <select id="reservaHoraInicio" name="reservaHoraInicio" required>
-          <option value="">Seleccionar hora de inicio</option>
-          <option value="07:00">7:00 AM</option>
-          <option value="08:00">8:00 AM</option>
-          <option value="09:00">9:00 AM</option>
-          <option value="14:00">2:00 PM</option>
-          <option value="15:00">3:00 PM</option>
-          <option value="16:00">4:00 PM</option>
-          <option value="17:00">5:00 PM</option>
-        </select>
-        <label for="reservaHoraFin">Hora de fin:</label>
-        <select id="reservaHoraFin" name="reservaHoraFin" required>
-          <option value="">Seleccionar hora de fin</option>
-          <option value="07:00">7:00 AM</option>
-          <option value="08:00">8:00 AM</option>
-          <option value="09:00">9:00 AM</option>
-          <option value="14:00">2:00 PM</option>
-          <option value="15:00">3:00 PM</option>
-          <option value="16:00">4:00 PM</option>
-          <option value="17:00">5:00 PM</option>
+        <label for="reservaHorario">Horario:</label>
+        <select id="reservaHorario" name="reservaHorario" required>
+          <option value="">Seleccionar horario</option>
+          <option value="06:00-08:00">6:00 - 8:00</option>
+          <option value="08:00-10:00">8:00 - 10:00</option>
+          <option value="10:00-12:00">10:00 - 12:00</option>
+          <option value="12:00-14:00">12:00 - 14:00</option>
+          <option value="14:00-16:00">14:00 - 16:00</option>
+          <option value="16:00-18:00">16:00 - 18:00</option>
+          <option value="18:00-20:00">18:00 - 20:00</option>
         </select>
         <label for="reservaEspacio">Espacio:</label>
         <select id="reservaEspacio" name="reservaEspacio" required>
@@ -100,8 +89,8 @@
           if (id_usuario) id_usuario = parseInt(id_usuario);
           const fechaInput = document.getElementById('reservaDate').value;
           const fecha = fechaInput ? new Date(fechaInput).toISOString().slice(0, 10) : '';
-          const hora_inicio = document.getElementById('reservaHoraInicio').value.padEnd(8, ':00');
-          const hora_fin = document.getElementById('reservaHoraFin').value.padEnd(8, ':00');
+          const horario = document.getElementById('reservaHorario').value;
+          const [hora_inicio, hora_fin] = horario.split('-');
           const espacio = document.getElementById('reservaEspacio').value;
           const id_espacio = espacioMap[espacio];
           msgDiv.textContent = '';
@@ -115,12 +104,8 @@
             mostrarMensaje('Seleccione un espacio válido.', 'red');
             return;
           }
-          if (!hora_inicio || !hora_fin) {
-            mostrarMensaje('Debe seleccionar hora de inicio y fin.', 'red');
-            return;
-          }
-          if (hora_fin <= hora_inicio) {
-            mostrarMensaje('La hora de fin debe ser mayor que la de inicio.', 'red');
+          if (!horario) {
+            mostrarMensaje('Debe seleccionar un horario.', 'red');
             return;
           }
           try {

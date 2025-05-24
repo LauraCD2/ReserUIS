@@ -52,11 +52,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         fila.setAttribute('data-id-reserva', reserva.id_reserva); // Para fácil acceso
         fila.setAttribute('data-id-espacio', reserva.id_espacio); // Para fácil acceso
         const fechaSolo = reserva.fecha ? reserva.fecha.slice(0, 10) : '';
+        const horaInicio = reserva.hora_inicio ? reserva.hora_inicio.slice(0,5) : '';
+        const horaFin = reserva.hora_fin ? reserva.hora_fin.slice(0,5) : '';
         fila.innerHTML = `
           <div>${fechaSolo}</div>
           <div>${reserva.tipo_espacio}</div>
           <div>${reserva.sala}</div>
-          <div>${reserva.hora_inicio} - ${reserva.hora_fin}</div>
+          <div>${horaInicio} - ${horaFin}</div>
           <div><button class="btnCancelarReserva" data-idx="${idx}" data-id-espacio="${reserva.id_espacio}" style="background:#b30000;color:#fff;padding:0.5rem 1.2rem;border:none;border-radius:5px;font-weight:bold;cursor:pointer;">Cancelar reserva</button></div>
         `;
         container.appendChild(fila);
