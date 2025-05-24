@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Reservas | ReserUIS</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body, h1, h2, label, input, select, button, a {
+      font-family: 'Humanist521', sans-serif;
+    }
+    h1, h2 { font-weight: 700; }
+    label { font-weight: 500; }
+    button, a { font-weight: 700; }
+    .formSection {
+      display: flex;
+      gap: 3rem;
+      align-items: flex-start;
+      margin-top: 2.5rem;
+      justify-content: center;
+    }
+    .reservaForm {
+      background: #fff;
+      padding: 2rem 2.2rem 1.5rem 2.2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px #0001;
+      min-width: 340px;
+      max-width: 400px;
+      flex: 1;
+    }
+    .listSection {
+      flex: 1;
+      min-width: 320px;
+      max-width: 500px;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px 4px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #045D18; color: #fff; }
+    .msg { font-weight: bold; margin-bottom: 10px; }
+    input, select {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      background: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <header class="mainHeader">
+    <h1>Gestión de Reservas</h1>
+    <nav>
+      <ul>
+        <li><a href="menu_admin.html">Inicio</a></li>
+        <li><a href="logout.html">Salir</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="formSection">
+    <form id="reservaForm" class="reservaForm">
+      <h2>Buscar/Filtrar Reservas</h2>
+      <label for="filtroUsuario">Usuario (nombre o código):</label>
+      <input type="text" id="filtroUsuario" name="filtroUsuario" placeholder="Nombre o código">
+      <label for="filtroEspacio">Espacio/Sala:</label>
+      <input type="text" id="filtroEspacio" name="filtroEspacio" placeholder="Nombre de espacio o sala">
+      <label for="filtroFecha">Fecha:</label>
+      <input type="date" id="filtroFecha" name="filtroFecha">
+      <button type="button" id="btnFiltrarReservas" style="margin-top:1.2rem;width:100%;">Filtrar</button>
+      <div id="msgReserva" class="msg" style="color:#045D18;"></div>
+      <hr style="margin:2.2rem 0 1.2rem 0;">
+      <h2 style="color:#b30000;">Eliminar Reserva</h2>
+      <label for="idReservaEliminar">ID Reserva:</label>
+      <input type="text" id="idReservaEliminar" name="idReservaEliminar" required placeholder="ID de la reserva">
+      <button type="button" id="btnEliminarReserva" style="margin-top:1.2rem;width:100%;background:#b30000;color:#fff;">Eliminar reserva</button>
+      <div id="msgEliminarReserva" class="msg" style="color:#b30000;"></div>
+    </form>
+    <section class="listSection">
+      <h2>Reservas Registradas</h2>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>Usuario</th><th>Espacio</th><th>Sala</th><th>Fecha</th><th>Hora</th></tr>
+        </thead>
+        <tbody id="reservaList">
+          <!-- Reservas cargadas dinámicamente -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <div id="modalConfirmacionReserva" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0007;z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:2rem 2.5rem;border-radius:10px;box-shadow:0 2px 16px #0003;text-align:center;max-width:350px;">
+      <h3 style="margin-bottom:1.2rem;">¿Está seguro de eliminar esta reserva?</h3>
+      <button id="btnConfirmarEliminarReserva" style="background:#b30000;color:#fff;padding:0.5rem 1.2rem;margin-right:1.2rem;border-radius:6px;border:none;font-weight:700;">Aceptar</button>
+      <button id="btnCancelarEliminarReserva" style="background:#eee;color:#222;padding:0.5rem 1.2rem;border-radius:6px;border:none;font-weight:700;">Cancelar</button>
+    </div>
+  </div>
+
+  <script>
+    // Cargar reservas (puedes ajustar el endpoint y los campos según tu backend)
+    async function cargarReservas(filtros = {}) {
+      const tbody = document.getElementById('reservaList');
+      tbody.innerHTML = '<tr><td colspan="6">Cargando...</td></tr>';
+      try {
+        let url = 'http://localhost:3001/api/reservas-admin';
+        const params = [];
+        if (filtros.usuario) params.push(`usuario=${encodeURIComponent(filtros.usuario)}`);
+        if (filtros.espacio) params.push(`espacio=${encodeURIComponent(filtros.espacio)}`);
+        if (filtros.fecha) params.push(`fecha=${encodeURIComponent(filtros.fecha)}`);
+        if (params.length) url += '?' + params.join('&');
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.reservas) && data.reservas.length > 0) {
+          tbody.innerHTML = data.reservas.map(r =>
+            `<tr><td>${r.id_reserva}</td><td>${r.usuario}</td><td>${r.tipo_espacio}</td><td>${r.sala}</td><td>${r.fecha}</td><td>${r.hora_inicio} - ${r.hora_fin}</td></tr>`
+          ).join('');
+        } else {
+          tbody.innerHTML = '<tr><td colspan="6">No hay reservas registradas.</td></tr>';
+        }
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="6">Error al cargar reservas.</td></tr>';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', () => cargarReservas());
+
+    document.getElementById('btnFiltrarReservas').onclick = function() {
+      const usuario = document.getElementById('filtroUsuario').value.trim();
+      const espacio = document.getElementById('filtroEspacio').value.trim();
+      const fecha = document.getElementById('filtroFecha').value;
+      cargarReservas({ usuario, espacio, fecha });
+    };
+
+    // Eliminar reserva
+    let reservaAEliminar = null;
+    document.getElementById('btnEliminarReserva').onclick = function() {
+      const id = document.getElementById('idReservaEliminar').value.trim();
+      const msg = document.getElementById('msgEliminarReserva');
+      msg.textContent = '';
+      if (!id) {
+        msg.textContent = 'Ingrese el ID de la reserva.';
+        msg.style.color = '#b30000';
+        return;
+      }
+      reservaAEliminar = id;
+      document.getElementById('modalConfirmacionReserva').style.display = 'flex';
+    };
+    document.getElementById('btnConfirmarEliminarReserva').onclick = async function() {
+      if (!reservaAEliminar) return;
+      const msg = document.getElementById('msgEliminarReserva');
+      msg.textContent = 'Eliminando reserva...';
+      msg.style.color = '#045D18';
+      try {
+        const res = await fetch(`http://localhost:3001/api/reservas/${reservaAEliminar}`, {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.textContent = 'Reserva eliminada correctamente.';
+          msg.style.color = '#045D18';
+          document.getElementById('idReservaEliminar').value = '';
+          await cargarReservas();
+        } else {
+          msg.textContent = data.message || 'No se pudo eliminar la reserva.';
+          msg.style.color = '#b30000';
+        }
+      } catch (e) {
+        msg.textContent = 'Error de conexión con el servidor.';
+        msg.style.color = '#b30000';
+      }
+      reservaAEliminar = null;
+      setTimeout(() => { document.getElementById('modalConfirmacionReserva').style.display = 'none'; }, 1500);
+    };
+    document.getElementById('btnCancelarEliminarReserva').onclick = function() {
+      reservaAEliminar = null;
+      document.getElementById('modalConfirmacionReserva').style.display = 'none';
+    };
+  </script>
+</body>
+</html>

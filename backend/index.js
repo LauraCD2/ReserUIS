@@ -138,6 +138,111 @@ app.get('/api/notificaciones', async (req, res) => {
   }
 });
 
+// Endpoint para obtener tipos de espacio
+app.get('/api/tipos-espacio', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id_tipo_espacio, nombre FROM tipo_espacio ORDER BY nombre ASC');
+    res.json({ success: true, tipos: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al obtener tipos de espacio' });
+  }
+});
+
+// Crear tipo de espacio
+app.post('/api/tipos-espacio', async (req, res) => {
+  const { nombre } = req.body;
+  if (!nombre) return res.status(400).json({ success: false, message: 'Nombre requerido' });
+  try {
+    const result = await pool.query('INSERT INTO tipo_espacio (nombre) VALUES ($1) RETURNING *', [nombre]);
+    res.json({ success: true, tipo: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al crear tipo de espacio' });
+  }
+});
+
+// Crear sala (espacio)
+app.post('/api/espacios', async (req, res) => {
+  const { nombre, id_tipo_espacio } = req.body;
+  if (!nombre || !id_tipo_espacio) return res.status(400).json({ success: false, message: 'Nombre e id_tipo_espacio requeridos' });
+  try {
+    const result = await pool.query('INSERT INTO espacio (nombre, id_tipo_espacio) VALUES ($1, $2) RETURNING *', [nombre, id_tipo_espacio]);
+    res.json({ success: true, espacio: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al crear sala' });
+  }
+});
+
+// Endpoint para obtener todos los espacios
+app.get('/api/espacios', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id_espacio, nombre, id_tipo_espacio FROM espacio ORDER BY id_espacio DESC');
+    res.json({ success: true, espacios: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al obtener espacios' });
+  }
+});
+
+// Endpoint para obtener todos los usuarios
+app.get('/api/usuarios', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id_usuario, nombre, codigo, id_tipo_usuario FROM usuario WHERE id_tipo_usuario IN (1,2,3) ORDER BY id_usuario DESC');
+    res.json({ success: true, usuarios: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al obtener usuarios' });
+  }
+});
+
+// Endpoint para crear usuario
+app.post('/api/usuarios', async (req, res) => {
+  const { nombre, codigo, password, id_tipo_usuario } = req.body;
+  if (!nombre || !codigo || !password || !id_tipo_usuario) {
+    return res.status(400).json({ success: false, message: 'Todos los campos son requeridos' });
+  }
+  try {
+    const result = await pool.query(
+      'INSERT INTO usuario (nombre, codigo, password, id_tipo_usuario) VALUES ($1, $2, $3, $4) RETURNING id_usuario, nombre, codigo, id_tipo_usuario',
+      [nombre, codigo, password, id_tipo_usuario]
+    );
+    res.json({ success: true, usuario: result.rows[0] });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al crear usuario' });
+  }
+});
+
+// Eliminar usuario por nombre y código (primero reservas, luego usuario)
+app.delete('/api/usuarios', async (req, res) => {
+  const { nombre, codigo } = req.body;
+  if (!nombre || !codigo) {
+    return res.status(400).json({ success: false, message: 'Nombre y código requeridos' });
+  }
+  try {
+    // Buscar el usuario por nombre y código
+    const result = await pool.query('SELECT id_usuario FROM usuario WHERE nombre = $1 AND codigo = $2', [nombre, codigo]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+    const id_usuario = result.rows[0].id_usuario;
+    // Eliminar reservas del usuario
+    await pool.query('DELETE FROM reserva WHERE id_usuario = $1', [id_usuario]);
+    // Eliminar el usuario
+    const deleted = await require('./models/usuario').deleteUsuario(id_usuario);
+    if (deleted) {
+      res.json({ success: true, usuario: deleted });
+    } else {
+      res.status(500).json({ success: false, message: 'No se pudo eliminar el usuario' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al eliminar usuario' });
+  }
+});
+
 // Iniciar servidor
 app.listen(port, () => {
   console.log(`Servidor backend escuchando en http://localhost:${port}`);

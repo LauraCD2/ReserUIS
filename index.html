@@ -51,7 +51,7 @@
     </div>
 
     <div class="rightPanel">
-      <a href="loginAdmin.html" class="adminBadge">ADMIN</a>
+      <button id="adminLoginBtn" class="adminBadge" type="button">ADMIN</button>
       <h2>Iniciar Sesión</h2>
       <form id="loginForm">
         <label for="username">Usuario</label>
@@ -72,7 +72,62 @@
       </form>
     </div>
   </div>
+
+  <!-- Modal de login admin -->
+  <div id="adminModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:2000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:2.2rem 2.5rem;border-radius:10px;box-shadow:0 2px 16px #0003;min-width:320px;max-width:90vw;position:relative;">
+      <span id="cerrarAdminModal" style="position:absolute;top:10px;right:18px;font-size:1.3em;cursor:pointer;font-weight:bold;color:#045D18;">&times;</span>
+      <h2 style="margin-top:0">Login Admin</h2>
+      <form id="adminLoginForm">
+        <label for="adminUser">Usuario</label>
+        <input type="text" id="adminUser" name="adminUser" required style="width:100%;margin-bottom:10px;" />
+        <label for="adminPass">Contraseña</label>
+        <input type="password" id="adminPass" name="adminPass" required style="width:100%;margin-bottom:10px;" />
+        <div id="adminLoginError" style="color:#c00;font-weight:bold;margin-bottom:8px;display:none;"></div>
+        <button type="submit" style="width:100%;background:#045D18;color:#fff;padding:0.7rem 0;border:none;border-radius:6px;font-weight:bold;">Entrar</button>
+      </form>
+    </div>
+  </div>
+
   <script src="js/main.js"></script>
   <script src="js/login.js"></script>
+  <script>
+    // Modal admin
+    const adminBtn = document.getElementById('adminLoginBtn');
+    const adminModal = document.getElementById('adminModal');
+    const cerrarAdminModal = document.getElementById('cerrarAdminModal');
+    adminBtn.onclick = () => { adminModal.style.display = 'flex'; };
+    cerrarAdminModal.onclick = () => { adminModal.style.display = 'none'; };
+    window.onclick = function(e) {
+      if (e.target === adminModal) adminModal.style.display = 'none';
+    };
+    // Login admin
+    document.getElementById('adminLoginForm').onsubmit = async function(e) {
+      e.preventDefault();
+      const code = document.getElementById('adminUser').value;
+      const password = document.getElementById('adminPass').value;
+      const errorDiv = document.getElementById('adminLoginError');
+      errorDiv.style.display = 'none';
+      try {
+        const res = await fetch('http://localhost:3001/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, password, id_tipo_usuario: 4 })
+        });
+        const data = await res.json();
+        if (data.success) {
+          localStorage.setItem('id_usuario', data.user.id_usuario);
+          localStorage.setItem('tipo_usuario', 4);
+          window.location.href = 'menu_admin.html';
+        } else {
+          errorDiv.textContent = data.message || 'Credenciales incorrectas';
+          errorDiv.style.display = 'block';
+        }
+      } catch (err) {
+        errorDiv.textContent = 'Error de conexión con el servidor';
+        errorDiv.style.display = 'block';
+      }
+    };
+  </script>
 </body>
 </html>

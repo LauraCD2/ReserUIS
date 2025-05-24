@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menú Admin | ReserUIS</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    body {
+      font-family: 'Humanist521', sans-serif;
+      background: #f8f8f8;
+      margin: 0;
+    }
+    .adminMenuWrapper {
+      max-width: 500px;
+      margin: 60px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px #0002;
+      padding: 2.5rem 2rem 2rem 2rem;
+      text-align: center;
+    }
+    h1 {
+      color: #045D18;
+      font-weight: 700;
+      margin-bottom: 2rem;
+    }
+    .adminMenuBtn {
+      display: block;
+      width: 100%;
+      margin: 1.2rem 0;
+      padding: 1rem 0;
+      font-size: 1.2em;
+      background: #045D18;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .adminMenuBtn:hover {
+      background: #059c3e;
+    }
+    .logoutBtn {
+      background: #b30000;
+      margin-top: 2.5rem;
+    }
+    .logoutBtn:hover {
+      background: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+  <div class="adminMenuWrapper">
+    <h1>Bienvenido</h1>
+    <button class="adminMenuBtn" onclick="window.location.href='gestionEspacios.html'">Gestionar Espacios</button>
+    <button class="adminMenuBtn" onclick="window.location.href='gestionUsuarios.html'">Gestionar Usuarios</button>
+    <button class="adminMenuBtn" onclick="window.location.href='gestionReservas.html'">Gestionar Reservas</button>
+    <button class="adminMenuBtn logoutBtn" onclick="window.location.href='logout.html'">Cerrar sesión</button>
+  </div>
+</body>
+</html>

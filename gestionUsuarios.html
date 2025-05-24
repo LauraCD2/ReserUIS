@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Usuarios | ReserUIS</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    body, h1, h2, label, input, select, button, a {
+      font-family: 'Humanist521', sans-serif;
+    }
+    h1, h2 { font-weight: 700; }
+    label { font-weight: 500; }
+    button, a { font-weight: 700; }
+    .formSection {
+      display: flex;
+      gap: 3rem;
+      align-items: flex-start;
+      margin-top: 2.5rem;
+      justify-content: center;
+    }
+    .userForm {
+      background: #fff;
+      padding: 2rem 2.2rem 1.5rem 2.2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px #0001;
+      min-width: 340px;
+      max-width: 400px;
+      flex: 1;
+    }
+    .listSection {
+      flex: 1;
+      min-width: 320px;
+      max-width: 500px;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px 4px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #045D18; color: #fff; }
+    .msg { font-weight: bold; margin-bottom: 10px; }
+    input, select {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      background: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <header class="mainHeader">
+    <h1>Gestión de Usuarios</h1>
+    <nav>
+      <ul>
+        <li><a href="menu_admin.html">Inicio</a></li>
+        <li><a href="logout.html">Salir</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="formSection">
+    <form id="userForm" class="userForm">
+      <h2>Agregar Usuario</h2>
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" required placeholder="Nombre completo">
+      <label for="codigo">Código:</label>
+      <input type="text" id="codigo" name="codigo" required placeholder="Código institucional">
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" name="password" required placeholder="Contraseña">
+      <label for="tipoUsuario">Tipo de usuario:</label>
+      <select id="tipoUsuario" name="tipoUsuario" required>
+        <option value="">Seleccionar tipo</option>
+        <option value="1">Estudiante</option>
+        <option value="2">Profesor</option>
+        <option value="3">Administrativo</option>
+      </select>
+      <button type="button" id="btnAgregarUsuario" style="margin-top:1.2rem;width:100%;">Agregar usuario</button>
+      <div id="msgUsuario" class="msg" style="color:#045D18;"></div>
+      <hr style="margin:2.2rem 0 1.2rem 0;">
+      <h2 style="color:#b30000;">Eliminar Usuario</h2>
+      <label for="nombreEliminar">Nombre:</label>
+      <input type="text" id="nombreEliminar" name="nombreEliminar" required placeholder="Nombre completo">
+      <label for="codigoEliminar">Código:</label>
+      <input type="text" id="codigoEliminar" name="codigoEliminar" required placeholder="Código institucional">
+      <button type="button" id="btnEliminarUsuario" style="margin-top:1.2rem;width:100%;background:#b30000;color:#fff;">Eliminar usuario</button>
+      <div id="msgEliminarUsuario" class="msg" style="color:#b30000;"></div>
+    </form>
+    <section class="listSection">
+      <h2>Usuarios Registrados</h2>
+      <table>
+        <thead>
+          <tr><th>Nombre</th><th>Código</th><th>Tipo</th></tr>
+        </thead>
+        <tbody id="userList">
+          <!-- Usuarios cargados dinámicamente -->
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Modal de confirmación -->
+  <div id="modalConfirmacion" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0007;z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:2rem 2.5rem;border-radius:10px;box-shadow:0 2px 16px #0003;text-align:center;max-width:350px;">
+      <h3 style="margin-bottom:1.2rem;">¿Está seguro de eliminar este usuario?</h3>
+      <button id="btnConfirmarEliminar" style="background:#b30000;color:#fff;padding:0.5rem 1.2rem;margin-right:1.2rem;border-radius:6px;border:none;font-weight:700;">Aceptar</button>
+      <button id="btnCancelarEliminar" style="background:#eee;color:#222;padding:0.5rem 1.2rem;border-radius:6px;border:none;font-weight:700;">Cancelar</button>
+    </div>
+  </div>
+
+  <script>
+    // Cargar usuarios
+    async function cargarUsuarios() {
+      const tbody = document.getElementById('userList');
+      tbody.innerHTML = '<tr><td colspan="3">Cargando...</td></tr>';
+      try {
+        const res = await fetch('http://localhost:3001/api/usuarios');
+        const data = await res.json();
+        const tipos = {1:'Estudiante',2:'Profesor',3:'Administrativo',4:'Admin'};
+        if (data.success && Array.isArray(data.usuarios) && data.usuarios.length > 0) {
+          // Ordenar por tipo de usuario (1=Estudiante, 2=Profesor, 3=Administrativo)
+          data.usuarios.sort((a, b) => a.id_tipo_usuario - b.id_tipo_usuario);
+          tbody.innerHTML = data.usuarios.map(u =>
+            `<tr><td>${u.nombre}</td><td>${u.codigo}</td><td>${tipos[u.id_tipo_usuario]||'-'}</td></tr>`
+          ).join('');
+        } else {
+          tbody.innerHTML = '<tr><td colspan="3">No hay usuarios registrados.</td></tr>';
+        }
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="3">Error al cargar usuarios.</td></tr>';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', cargarUsuarios);
+
+    // Agregar usuario
+    document.getElementById('btnAgregarUsuario').onclick = async function() {
+      const nombre = document.getElementById('nombre').value.trim();
+      const codigo = document.getElementById('codigo').value.trim();
+      const password = document.getElementById('password').value;
+      const id_tipo_usuario = document.getElementById('tipoUsuario').value;
+      const msg = document.getElementById('msgUsuario');
+      msg.textContent = '';
+      if (!nombre || !codigo || !password || !id_tipo_usuario) {
+        msg.textContent = 'Complete todos los campos.';
+        msg.style.color = '#b30000';
+        return;
+      }
+      try {
+        const res = await fetch('http://localhost:3001/api/usuarios', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, codigo, password, id_tipo_usuario })
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.textContent = 'Usuario agregado correctamente.';
+          msg.style.color = '#045D18';
+          document.getElementById('userForm').reset();
+          await cargarUsuarios();
+        } else {
+          msg.textContent = data.message || 'No se pudo agregar el usuario.';
+          msg.style.color = '#b30000';
+        }
+      } catch (e) {
+        msg.textContent = 'Error de conexión con el servidor.';
+        msg.style.color = '#b30000';
+      }
+    };
+
+    // Eliminar usuario
+    let usuarioAEliminar = null;
+    document.getElementById('btnEliminarUsuario').onclick = function() {
+      const nombre = document.getElementById('nombreEliminar').value.trim();
+      const codigo = document.getElementById('codigoEliminar').value.trim();
+      const msg = document.getElementById('msgEliminarUsuario');
+      msg.textContent = '';
+      if (!nombre || !codigo) {
+        msg.textContent = 'Complete todos los campos.';
+        msg.style.color = '#b30000';
+        return;
+      }
+      usuarioAEliminar = { nombre, codigo };
+      document.getElementById('modalConfirmacion').style.display = 'flex';
+    };
+
+    document.getElementById('btnConfirmarEliminar').onclick = async function() {
+      if (!usuarioAEliminar) return;
+      const msg = document.getElementById('msgEliminarUsuario');
+      msg.textContent = 'Eliminando usuario...';
+      msg.style.color = '#045D18';
+      try {
+        const res = await fetch('http://localhost:3001/api/usuarios', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(usuarioAEliminar)
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.textContent = 'Usuario eliminado correctamente.';
+          msg.style.color = '#045D18';
+          document.getElementById('nombreEliminar').value = '';
+          document.getElementById('codigoEliminar').value = '';
+          await cargarUsuarios();
+        } else {
+          msg.textContent = data.message || 'No se pudo eliminar el usuario.';
+          msg.style.color = '#b30000';
+        }
+      } catch (e) {
+        msg.textContent = 'Error de conexión con el servidor.';
+        msg.style.color = '#b30000';
+      }
+      usuarioAEliminar = null;
+      setTimeout(() => { document.getElementById('modalConfirmacion').style.display = 'none'; }, 1500);
+    };
+
+    document.getElementById('btnCancelarEliminar').onclick = function() {
+      usuarioAEliminar = null;
+      document.getElementById('modalConfirmacion').style.display = 'none';
+    };
+  </script>
+</body>
+</html>

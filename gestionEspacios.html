@@ -24,6 +24,17 @@
     a {
       font-weight: 700;
     }
+
+    input, select {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      background: #f5f5f5;
+    }
   </style>
 </head>
 <body>
@@ -31,52 +42,168 @@
     <h1>Gestión de Espacios</h1>
     <nav>
       <ul>
-        <li><a href="espacios.html">Espacios</a></li>
-        <li><a href="#">Reservas</a></li>
-        <li><a href="#">Reportes</a></li>
-        <li><a href="notificaciones.html">Notificaciones</a></li>
+        <li><a href="menu_admin.html">Inicio</a></li>
         <li><a href="logout.html">Salir</a></li>
       </ul>
     </nav>
   </header>
 
-  <main class="formSection">
-    <form id="spaceForm">
-      <h2>Crear / Editar Espacio</h2>
+  
+  <main class="formSection" style="display:flex;gap:3rem;align-items:flex-start;">
+    <form id="spaceForm" style="min-width:340px;max-width:400px;flex:1;">
+      <h2>Agregar Espacio</h2>
 
-      <label for="spaceName">Nombre del espacio:</label>
+      <label for="spaceName">Nombre del Espacio:</label>
       <input type="text" id="spaceName" name="spaceName" placeholder="Ej: Coliseo" required>
 
-      <label for="spaceDescription">Descripción del espacio:</label>
-      <textarea id="spaceDescription" name="spaceDescription" placeholder="Descripción general del espacio"></textarea>
+      <button type="button" id="btnCrearTipoEspacio" style="margin-bottom:18px;display:block;">Crear tipo de espacio</button>
+      <div id="msgTipoEspacio" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
 
-      <label for="roomName">Nombre de la sala:</label>
-      <input type="text" id="roomName" name="roomName" placeholder="Ej: Sala Yoga" required>
 
-      <label for="roomDescription">Descripción de la sala:</label>
-      <textarea id="roomDescription" name="roomDescription" placeholder="Descripción detallada de la sala"></textarea>
+      <h2>Agregar Sala </h2>
 
-      <label for="capacity">Capacidad:</label>
-      <input type="number" id="capacity" name="capacity" min="1" required>
+      <label for="salaName">Nombre de la Sala:</label>
+      <input type="text" id="salaName" name="salaName" placeholder="Ej: Gimnasio" required>
 
-      <label for="startTime">Hora de inicio:</label>
-      <input type="time" id="startTime" name="startTime" required>
-
-      <label for="endTime">Hora final:</label>
-      <input type="time" id="endTime" name="endTime" required>
-
-      <button type="submit">Guardar</button>
-      <button type="reset">Limpiar</button>
+      <label for="spaceType">Tipo de espacio:</label>
+      <select id="spaceType" name="spaceType" required>
+        <option value="">Cargando tipos...</option>
+      </select>
+      <button type="button" id="btnCrearSala">Crear sala</button>
+      <div id="msgSala" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
     </form>
 
-    <section class="listSection">
+    <section class="listSection" style="flex:1;min-width:320px;max-width:500px;">
       <h2>Espacios Registrados</h2>
-      <ul id="spaceList">
-        <!-- Aquí se cargarán dinámicamente los espacios -->
-      </ul>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="background:#045D18;color:#fff;">
+            <th style="padding:8px 4px;text-align:left;">Espacio</th>
+            <th style="padding:8px 4px;text-align:left;">Sala</th>
+          </tr>
+        </thead>
+        <tbody id="spaceList">
+          <!-- Aquí se cargarán dinámicamente los espacios -->
+        </tbody>
+      </table>
     </section>
   </main>
 
   <script src="js/main.js"></script>
+  <script>
+    // Cargar tipos de espacio desde la base de datos
+    async function cargarTiposEspacio() {
+      const select = document.getElementById('spaceType');
+      try {
+        const res = await fetch('http://localhost:3001/api/tipos-espacio');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.tipos)) {
+          select.innerHTML = '<option value="">Seleccionar tipo</option>' +
+            data.tipos.map(t => `<option value="${t.id_tipo_espacio}">${t.nombre}</option>`).join('');
+        } else {
+          select.innerHTML = '<option value="">No hay tipos disponibles</option>';
+        }
+      } catch (e) {
+        select.innerHTML = '<option value="">Error al cargar tipos</option>';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', cargarTiposEspacio);
+
+    // Cargar lista de espacios y tipos
+    async function cargarEspacios() {
+      const tbody = document.getElementById('spaceList');
+      tbody.innerHTML = '<tr><td colspan="2">Cargando...</td></tr>';
+      try {
+        // Obtener tipos de espacio para mapear id -> nombre
+        const tiposRes = await fetch('http://localhost:3001/api/tipos-espacio');
+        const tiposData = await tiposRes.json();
+        const tiposMap = {};
+        if (tiposData.success && Array.isArray(tiposData.tipos)) {
+          tiposData.tipos.forEach(t => { tiposMap[t.id_tipo_espacio] = t.nombre; });
+        }
+        // Obtener espacios
+        const res = await fetch('http://localhost:3001/api/espacios');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.espacios) && data.espacios.length > 0) {
+          // Ordenar por nombre de espacio (sala)
+          data.espacios.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', {sensitivity:'base'}));
+          tbody.innerHTML = data.espacios.map(e =>
+            `<tr><td style='padding:7px 4px;border-bottom:1px solid #eee;'>${tiposMap[e.id_tipo_espacio] || '-'}</td><td style='padding:7px 4px;border-bottom:1px solid #eee;'>${e.nombre}</td></tr>`
+          ).join('');
+        } else {
+          tbody.innerHTML = '<tr><td colspan="2">No hay espacios registrados.</td></tr>';
+        }
+      } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="2">Error al cargar espacios.</td></tr>';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', cargarEspacios);
+
+    // Crear tipo de espacio
+    document.getElementById('btnCrearTipoEspacio').onclick = async function() {
+      const nombre = document.getElementById('spaceName').value.trim();
+      const msg = document.getElementById('msgTipoEspacio');
+      msg.textContent = '';
+      if (!nombre) {
+        msg.textContent = 'Ingrese un nombre para el tipo de espacio.';
+        msg.style.color = '#b30000';
+        return;
+      }
+      try {
+        const res = await fetch('http://localhost:3001/api/tipos-espacio', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre })
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.textContent = 'Tipo de espacio creado correctamente.';
+          msg.style.color = '#045D18';
+          document.getElementById('spaceName').value = '';
+          await cargarTiposEspacio();
+        } else {
+          msg.textContent = data.message || 'No se pudo crear el tipo de espacio.';
+          msg.style.color = '#b30000';
+        }
+      } catch (e) {
+        msg.textContent = 'Error de conexión con el servidor.';
+        msg.style.color = '#b30000';
+      }
+    };
+
+    // Crear sala
+    document.getElementById('btnCrearSala').onclick = async function() {
+      const nombre = document.getElementById('salaName').value.trim();
+      const id_tipo_espacio = document.getElementById('spaceType').value;
+      const msg = document.getElementById('msgSala');
+      msg.textContent = '';
+      if (!nombre || !id_tipo_espacio) {
+        msg.textContent = 'Ingrese el nombre de la sala y seleccione un tipo de espacio.';
+        msg.style.color = '#b30000';
+        return;
+      }
+      try {
+        const res = await fetch('http://localhost:3001/api/espacios', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, id_tipo_espacio })
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.textContent = 'Sala creada correctamente.';
+          msg.style.color = '#045D18';
+          document.getElementById('salaName').value = '';
+          document.getElementById('spaceType').value = '';
+          await cargarEspacios();
+        } else {
+          msg.textContent = data.message || 'No se pudo crear la sala.';
+          msg.style.color = '#b30000';
+        }
+      } catch (e) {
+        msg.textContent = 'Error de conexión con el servidor.';
+        msg.style.color = '#b30000';
+      }
+    };
+  </script>
 </body>
 </html>
