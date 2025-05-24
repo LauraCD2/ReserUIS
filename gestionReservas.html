@@ -29,12 +29,12 @@
     }
     .listSection {
       flex: 1;
-      min-width: 320px;
-      max-width: 500px;
+      min-width: 500px;
+      max-width: 800px;
     }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 8px 4px; text-align: left; border-bottom: 1px solid #eee; }
-    th { background: #045D18; color: #fff; }
+    table { width: 100%; border-collapse: collapse; font-size: 1.13rem; }
+    th, td { padding: 14px 8px; text-align: left; border-bottom: 1px solid #eee; }
+    th { background: #045D18; color: #fff; font-size: 1.15rem; }
     .msg { font-weight: bold; margin-bottom: 10px; }
     input, select {
       width: 100%;
@@ -61,7 +61,7 @@
 
   <main class="formSection">
     <form id="reservaForm" class="reservaForm">
-      <h2>Buscar/Filtrar Reservas</h2>
+      <h2>Filtrar Reservas</h2>
       <label for="filtroUsuario">Usuario (nombre o código):</label>
       <input type="text" id="filtroUsuario" name="filtroUsuario" placeholder="Nombre o código">
       <label for="filtroEspacio">Espacio/Sala:</label>
@@ -113,9 +113,14 @@
         const res = await fetch(url);
         const data = await res.json();
         if (data.success && Array.isArray(data.reservas) && data.reservas.length > 0) {
-          tbody.innerHTML = data.reservas.map(r =>
-            `<tr><td>${r.id_reserva}</td><td>${r.usuario}</td><td>${r.tipo_espacio}</td><td>${r.sala}</td><td>${r.fecha}</td><td>${r.hora_inicio} - ${r.hora_fin}</td></tr>`
-          ).join('');
+          tbody.innerHTML = data.reservas.map(r => {
+            // Formatear fecha a YYYY-MM-DD
+            const fecha = r.fecha ? r.fecha.slice(0,10) : '';
+            // Formatear horas a HH:MM
+            const horaInicio = r.hora_inicio ? r.hora_inicio.slice(0,5) : '';
+            const horaFin = r.hora_fin ? r.hora_fin.slice(0,5) : '';
+            return `<tr><td>${r.id_reserva}</td><td>${r.usuario}</td><td>${r.tipo_espacio}</td><td>${r.sala}</td><td>${fecha}</td><td>${horaInicio} - ${horaFin}</td></tr>`;
+          }).join('');
         } else {
           tbody.innerHTML = '<tr><td colspan="6">No hay reservas registradas.</td></tr>';
         }

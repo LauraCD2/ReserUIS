@@ -243,6 +243,46 @@ app.delete('/api/usuarios', async (req, res) => {
   }
 });
 
+// Endpoint para gestión de reservas (admin, con filtros)
+app.get('/api/reservas-admin', async (req, res) => {
+  try {
+    const { usuario, espacio, fecha } = req.query;
+    let filtros = [];
+    let valores = [];
+    // Filtro por usuario (nombre o código)
+    if (usuario) {
+      filtros.push('(u.nombre ILIKE $' + (valores.length+1) + ' OR u.codigo ILIKE $' + (valores.length+1) + ')');
+      valores.push(`%${usuario}%`);
+    }
+    // Filtro por espacio/sala
+    if (espacio) {
+      filtros.push('(e.nombre ILIKE $' + (valores.length+1) + ' OR te.nombre ILIKE $' + (valores.length+1) + ')');
+      valores.push(`%${espacio}%`);
+    }
+    // Filtro por fecha
+    if (fecha) {
+      filtros.push('r.fecha = $' + (valores.length+1));
+      valores.push(fecha);
+    }
+    let where = filtros.length ? 'WHERE ' + filtros.join(' AND ') : '';
+    const query = `
+      SELECT r.id_reserva, r.id_espacio, r.fecha, te.nombre AS tipo_espacio, e.nombre AS sala, u.nombre AS usuario, u.codigo, r.hora_inicio, r.hora_fin
+      FROM reserva r
+      JOIN espacio e ON r.id_espacio = e.id_espacio
+      JOIN tipo_espacio te ON e.id_tipo_espacio = te.id_tipo_espacio
+      JOIN usuario u ON r.id_usuario = u.id_usuario
+      ${where}
+      ORDER BY r.fecha DESC, r.hora_inicio DESC
+      LIMIT 100
+    `;
+    const result = await pool.query(query, valores);
+    res.json({ success: true, reservas: result.rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al obtener reservas' });
+  }
+});
+
 // Iniciar servidor
 app.listen(port, () => {
   console.log(`Servidor backend escuchando en http://localhost:${port}`);
