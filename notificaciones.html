@@ -71,18 +71,35 @@
     </nav>
   </header>
 
-  <main class="notificacionesWrapper">
-    <div class="notificacion">
-      Se notifica que la sala de <strong>GIMNASIO</strong> del espacio <strong>COLISEO</strong> en el horario de <strong>2:00 PM</strong> en la fecha <strong>4/28/2025</strong> ha sido <strong>cancelada</strong>.
-    </div>
-    <div class="notificacion">
-      Se notifica que la sala de <strong>SALA YOGA</strong> del espacio <strong>COLISEO</strong> en el horario de <strong>5:00 PM</strong> en la fecha <strong>4/29/2025</strong> ha sido <strong>cancelada</strong>.
-    </div>
-    <div class="notificacion">
-      Se notifica que la sala de <strong>SALA BICICLETAS</strong> del espacio <strong>COLISEO</strong> en el horario de <strong>8:00 AM</strong> en la fecha <strong>5/29/2024</strong> ha sido <strong>reservada</strong>.
-    </div>
+  <main class="notificacionesWrapper" id="notificacionesWrapper">
+    <!-- Las notificaciones se cargarán aquí dinámicamente -->
   </main>
 
   <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+      const id_usuario = localStorage.getItem('id_usuario');
+      const wrapper = document.getElementById('notificacionesWrapper');
+      if (!id_usuario) {
+        wrapper.innerHTML = '<div class="notificacion">Debe iniciar sesión para ver sus notificaciones.</div>';
+        return;
+      }
+      try {
+        const res = await fetch(`http://localhost:3001/api/notificaciones?id_usuario=${id_usuario}`);
+        const data = await res.json();
+        if (data.success && data.notificaciones.length > 0) {
+          wrapper.innerHTML = data.notificaciones.map(n => {
+            // Si el trigger guarda el mensaje listo, solo mostrarlo. Si guarda datos, puedes formatear aquí.
+            const fecha = new Date(n.fecha).toLocaleString('es-CO', { dateStyle: 'short', timeStyle: 'short' });
+            return `<div class="notificacion">${n.mensaje}<br><small style='color:#666'>${fecha}</small></div>`;
+          }).join('');
+        } else {
+          wrapper.innerHTML = '<div class="notificacion">No hay notificaciones.</div>';
+        }
+      } catch (e) {
+        wrapper.innerHTML = '<div class="notificacion">Error al cargar notificaciones.</div>';
+      }
+    });
+  </script>
 </body>
 </html>

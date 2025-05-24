@@ -115,6 +115,29 @@ app.delete('/api/reservas/:id_reserva', async (req, res) => {
   }
 });
 
+// Endpoint para obtener notificaciones de un usuario
+app.get('/api/notificaciones', async (req, res) => {
+  try {
+    const id_usuario = req.query.id_usuario;
+    if (!id_usuario) return res.status(400).json({ success: false, message: 'id_usuario es requerido' });
+    const result = await pool.query(`
+      SELECT mensaje, fecha
+      FROM notificaciones
+      WHERE id_usuario = $1
+      ORDER BY fecha DESC
+      LIMIT 30
+    `, [id_usuario]);
+    const notificaciones = result.rows.map(row => ({
+      mensaje: row.mensaje,
+      fecha: row.fecha
+    }));
+    res.json({ success: true, notificaciones });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error al obtener notificaciones' });
+  }
+});
+
 // Iniciar servidor
 app.listen(port, () => {
   console.log(`Servidor backend escuchando en http://localhost:${port}`);

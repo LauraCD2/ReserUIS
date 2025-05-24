@@ -71,10 +71,10 @@
           const valor = this.value;
           if (valor) {
             const fecha = new Date(valor + 'T00:00:00');
-            const dia = fecha.getDay();
+            const dia = fecha.getDay(); // 0: domingo, 6: sábado
             if (dia === 0 || dia === 6) {
               this.value = '';
-              alert('Solo se permiten días hábiles (lunes a viernes).');
+              mostrarMensaje('Solo se permiten días hábiles (lunes a viernes).', 'red');
             }
           }
         });
@@ -140,6 +140,11 @@
         msgDiv.style.display = 'block';
         msgDiv.style.background = exito ? '#e6ffe6' : '#fff0f0';
         msgDiv.style.border = exito ? '1px solid #2ecc40' : '1px solid #e74c3c';
+        msgDiv.style.borderRadius = '8px';
+        msgDiv.style.padding = '10px 16px 10px 16px';
+        msgDiv.style.position = 'relative';
+        msgDiv.style.marginTop = '12px';
+        msgDiv.style.boxShadow = '0 2px 8px #0001';
         document.getElementById('cerrarMsgColiseo').onclick = function() {
           msgDiv.style.display = 'none';
         };
