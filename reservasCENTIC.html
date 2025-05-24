@@ -68,6 +68,27 @@
     document.addEventListener('DOMContentLoaded', function () {
       const form = document.getElementById('reservaFormCENTIC');
       const msgDiv = document.getElementById('reservaMsgCENTIC');
+      const fechaInput = document.getElementById('reservaDate');
+      if (fechaInput) {
+        const hoy = new Date();
+        hoy.setDate(hoy.getDate() + 1);
+        const yyyy = hoy.getFullYear();
+        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dd = String(hoy.getDate()).padStart(2, '0');
+        const minDate = `${yyyy}-${mm}-${dd}`;
+        fechaInput.setAttribute('min', minDate);
+        fechaInput.addEventListener('change', function() {
+          const valor = this.value;
+          if (valor) {
+            const fecha = new Date(valor + 'T00:00:00');
+            const dia = fecha.getDay();
+            if (dia === 0 || dia === 6) {
+              this.value = '';
+              alert('Solo se permiten días hábiles (lunes a viernes).');
+            }
+          }
+        });
+      }
       if (form) {
         form.addEventListener('submit', async function (e) {
           e.preventDefault();
