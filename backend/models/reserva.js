@@ -24,7 +24,7 @@ const addReserva = async (reservaData) => {
 const deleteReservaPorEspacio = async (id_espacio) => {
     const query = 'DELETE FROM reserva WHERE id_espacio = $1 RETURNING *';
     const result = await db.query(query, [id_espacio]);
-    return result.rows[0];
+    return result.rows.length > 0 ? result.rows : true; // Retorna las filas eliminadas o true si no había reservas
 };
 
 // Eliminar una reserva por id_reserva

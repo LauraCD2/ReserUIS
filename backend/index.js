@@ -243,6 +243,81 @@ app.delete('/api/usuarios', async (req, res) => {
   }
 });
 
+// Eliminar sala por nombre y tipo de espacio (primero reservas, luego sala)
+app.delete('/api/espacios', async (req, res) => {
+  const { nombre, id_tipo_espacio } = req.body;
+  if (!nombre || !id_tipo_espacio) {
+    return res.status(400).json({ success: false, message: 'Nombre y tipo de espacio requeridos' });
+  }
+
+  const client = await pool.connect();
+  
+  try {
+    await client.query('BEGIN'); // Iniciar transacción
+
+    // Verificar si existe el tipo de espacio
+    const tipoResult = await client.query(
+      'SELECT id_tipo_espacio FROM tipo_espacio WHERE id_tipo_espacio = $1',
+      [id_tipo_espacio]
+    );
+
+    if (tipoResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ success: false, message: 'Tipo de espacio no encontrado' });
+    }
+
+    // Buscar la sala por nombre y tipo de espacio
+    const espacioResult = await client.query(
+      'SELECT id_espacio FROM espacio WHERE nombre = $1 AND id_tipo_espacio = $2',
+      [nombre, id_tipo_espacio]
+    );
+
+    if (espacioResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ success: false, message: 'Sala no encontrada' });
+    }
+
+    const id_espacio = espacioResult.rows[0].id_espacio;
+
+    // Eliminar primero las reservas asociadas
+    const reservasResult = await client.query(
+      'DELETE FROM reserva WHERE id_espacio = $1 RETURNING id_reserva',
+      [id_espacio]
+    );
+    
+    // Eliminar el espacio
+    const espacioDeleteResult = await client.query(
+      'DELETE FROM espacio WHERE id_espacio = $1 AND id_tipo_espacio = $2 RETURNING *',
+      [id_espacio, id_tipo_espacio]
+    );
+
+    if (espacioDeleteResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(500).json({ success: false, message: 'No se pudo eliminar la sala' });
+    }
+
+    await client.query('COMMIT');
+    
+    res.json({ 
+      success: true, 
+      mensaje: 'Sala eliminada correctamente',
+      espacio: espacioDeleteResult.rows[0],
+      reservasEliminadas: reservasResult.rows.length
+    });
+
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error al eliminar sala:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error al eliminar sala',
+      error: err.message 
+    });
+  } finally {
+    client.release();
+  }
+});
+
 // Endpoint para gestión de reservas (admin, con filtros)
 app.get('/api/reservas-admin', async (req, res) => {
   try {
@@ -287,3 +362,4 @@ app.get('/api/reservas-admin', async (req, res) => {
 app.listen(port, () => {
   console.log(`Servidor backend escuchando en http://localhost:${port}`);
 });
+

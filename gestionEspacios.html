@@ -71,6 +71,127 @@
     .espacios-table tr.hidden {
       display: none;
     }
+
+    .btn-editar {
+      background: #045D18;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .btn-editar:hover {
+      background: #034713;
+    }
+
+    .btn-eliminar {
+      background: #b30000;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: 8px;
+    }
+
+    .btn-eliminar:hover {
+      background: #8b0000;
+    }
+
+    .acciones {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    /* Modal de confirmación para eliminar */
+    #modalConfirmarEliminar {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #modalConfirmarEliminar .modal-content {
+      text-align: center;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn-confirmar-eliminar {
+      background: #b30000;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-cancelar-eliminar {
+      background: #666;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Modal de edición */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      color: #045D18;
+    }
+
+    .btn-cerrar {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+      color: #666;
+    }
   </style>
 </head>
 <body>
@@ -121,6 +242,7 @@
           <tr>
             <th>Espacio</th>
             <th>Sala</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody id="spaceList">
@@ -129,6 +251,16 @@
       </table>
     </section>
   </main>
+
+  <!-- Modal de confirmación -->
+  <div id="modalConfirmacion" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0007;z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:2rem 2.5rem;border-radius:10px;box-shadow:0 2px 16px #0003;text-align:center;max-width:350px;">
+      <h3 style="margin-bottom:1.2rem;">¿Está seguro de eliminar esta sala?</h3>
+      <p style="color:#666;margin-bottom:1.5rem;font-size:0.9rem;">Se eliminarán también todas las reservas asociadas.</p>
+      <button id="btnConfirmarEliminar" style="background:#b30000;color:#fff;padding:0.5rem 1.2rem;margin-right:1.2rem;border-radius:6px;border:none;font-weight:700;">Aceptar</button>
+      <button id="btnCancelarEliminar" style="background:#eee;color:#222;padding:0.5rem 1.2rem;border-radius:6px;border:none;font-weight:700;">Cancelar</button>
+    </div>
+  </div>
 
   <script src="js/main.js"></script>
   <script>
@@ -157,7 +289,7 @@
     // Cargar lista de espacios y tipos
     async function cargarEspacios() {
       const tbody = document.getElementById('spaceList');
-      tbody.innerHTML = '<tr><td colspan="2">Cargando...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="3">Cargando...</td></tr>';
       try {
         // Obtener tipos de espacio para mapear id -> nombre
         const tiposRes = await fetch('http://localhost:3001/api/tipos-espacio');
@@ -173,13 +305,23 @@
           // Ordenar por nombre de espacio (sala)
           data.espacios.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', {sensitivity:'base'}));
           tbody.innerHTML = data.espacios.map(e =>
-            `<tr data-tipo-espacio="${e.id_tipo_espacio}"><td style='padding:7px 4px;border-bottom:1px solid #eee;'>${tiposMap[e.id_tipo_espacio] || '-'}</td><td style='padding:7px 4px;border-bottom:1px solid #eee;'>${e.nombre}</td></tr>`
+            `<tr data-tipo-espacio="${e.id_tipo_espacio}">
+              <td style='padding:7px 4px;border-bottom:1px solid #eee;'>${tiposMap[e.id_tipo_espacio] || '-'}</td>
+              <td style='padding:7px 4px;border-bottom:1px solid #eee;'>${e.nombre}</td>
+              <td style='padding:7px 4px;border-bottom:1px solid #eee;'>
+                <div class="acciones">
+                  <button class="btn-eliminar" onclick="confirmarEliminar('${e.nombre}', '${e.id_tipo_espacio}')">
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>`
           ).join('');
         } else {
-          tbody.innerHTML = '<tr><td colspan="2">No hay espacios registrados.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="3">No hay espacios registrados.</td></tr>';
         }
       } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="2">Error al cargar espacios.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3">Error al cargar espacios.</td></tr>';
       }
     }
     document.addEventListener('DOMContentLoaded', cargarEspacios);
@@ -262,6 +404,49 @@
           row.classList.add('hidden');
         }
       });
+    });
+
+    // Variables y funciones para eliminar sala
+    let salaAEliminar = null;
+
+    function confirmarEliminar(nombre, id_tipo_espacio) {
+      salaAEliminar = { nombre, id_tipo_espacio };
+      document.getElementById('modalConfirmacion').style.display = 'flex';
+    }
+
+    document.getElementById('btnConfirmarEliminar').onclick = async function() {
+      if (!salaAEliminar) return;
+      try {
+        const res = await fetch('http://localhost:3001/api/espacios', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(salaAEliminar)
+        });
+        const data = await res.json();
+        if (data.success) {
+          await cargarEspacios();
+          document.getElementById('modalConfirmacion').style.display = 'none';
+        } else {
+          alert(data.message || 'No se pudo eliminar la sala');
+        }
+      } catch (e) {
+        console.error('Error al eliminar:', e);
+        alert('Error de conexión con el servidor');
+      }
+      salaAEliminar = null;
+    };
+
+    document.getElementById('btnCancelarEliminar').onclick = function() {
+      salaAEliminar = null;
+      document.getElementById('modalConfirmacion').style.display = 'none';
+    };
+
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('modalConfirmacion').addEventListener('click', function(e) {
+      if (e.target === this) {
+        salaAEliminar = null;
+        this.style.display = 'none';
+      }
     });
   </script>
 </body>
