@@ -22,20 +22,7 @@
     <section class="formReserva">
       <h2>Reservar cita Canchas</h2>
       <form id="reservaFormCanchas">
-        <label for="reservaDate">Fecha:</label>
-        <input type="date" id="reservaDate" name="reservaDate" required />
-        <label for="reservaHorario">Horario:</label>
-        <select id="reservaHorario" name="reservaHorario" required>
-          <option value="">Seleccionar horario</option>
-          <option value="06:00-08:00">6:00 - 8:00</option>
-          <option value="08:00-10:00">8:00 - 10:00</option>
-          <option value="10:00-12:00">10:00 - 12:00</option>
-          <option value="12:00-14:00">12:00 - 14:00</option>
-          <option value="14:00-16:00">14:00 - 16:00</option>
-          <option value="16:00-18:00">16:00 - 18:00</option>
-          <option value="18:00-20:00">18:00 - 20:00</option>
-        </select>
-        <label for="reservaEspacio">Espacio:</label>
+        <label for="reservaEspacio">Sala:</label>
         <select id="reservaEspacio" name="reservaEspacio" required>
           <option value="">Seleccionar espacio</option>
           <option value="arena">Arena</option>
@@ -48,6 +35,19 @@
           <option value="tenis">Tenis</option>
           <option value="teqball">Teqball</option>
           <option value="voleibol">Voleibol</option>
+        </select>
+        <label for="reservaDate">Fecha:</label>
+        <input type="date" id="reservaDate" name="reservaDate" required />
+        <label for="reservaHorario">Horario:</label>
+        <select id="reservaHorario" name="reservaHorario" required>
+          <option value="">Seleccionar horario</option>
+          <option value="06:00-08:00">6:00 - 8:00</option>
+          <option value="08:00-10:00">8:00 - 10:00</option>
+          <option value="10:00-12:00">10:00 - 12:00</option>
+          <option value="12:00-14:00">12:00 - 14:00</option>
+          <option value="14:00-16:00">14:00 - 16:00</option>
+          <option value="16:00-18:00">16:00 - 18:00</option>
+          <option value="18:00-20:00">18:00 - 20:00</option>
         </select>
         <button type="submit">Reservar</button>
       </form>

@@ -22,6 +22,12 @@
     <section class="formReserva">
       <h2>Reservar cita CENTIC</h2>
       <form id="reservaFormCENTIC">
+        <label for="reservaEspacio">Sala:</label>
+        <select id="reservaEspacio" name="reservaEspacio" required>
+          <option value="">Seleccionar espacio</option>
+          <option value="auditorio">Auditorio</option>
+          <option value="sala">Sala</option>
+        </select>
         <label for="reservaDate">Fecha:</label>
         <input type="date" id="reservaDate" name="reservaDate" required />
         <label for="reservaHorario">Horario:</label>
@@ -34,12 +40,6 @@
           <option value="14:00-16:00">14:00 - 16:00</option>
           <option value="16:00-18:00">16:00 - 18:00</option>
           <option value="18:00-20:00">18:00 - 20:00</option>
-        </select>
-        <label for="reservaEspacio">Espacio:</label>
-        <select id="reservaEspacio" name="reservaEspacio" required>
-          <option value="">Seleccionar espacio</option>
-          <option value="auditorio">Auditorio</option>
-          <option value="sala">Sala</option>
         </select>
         <button type="submit">Reservar</button>
       </form>
