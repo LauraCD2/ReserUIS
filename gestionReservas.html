@@ -63,11 +63,26 @@
       <h2>Filtrar Reservas</h2>
       <label for="filtroUsuario">Usuario (nombre o código):</label>
       <input type="text" id="filtroUsuario" name="filtroUsuario" placeholder="Nombre o código">
-      <label for="filtroEspacio">Espacio/Sala:</label>
-      <input type="text" id="filtroEspacio" name="filtroEspacio" placeholder="Nombre de espacio o sala">
+      
+      <div style="display: flex; gap: 10px;">
+        <div style="flex: 1;">
+          <label for="filtroTipoEspacio">Tipo de Espacio:</label>
+          <select id="filtroTipoEspacio" name="filtroTipoEspacio">
+            <option value="">Todos los tipos</option>
+          </select>
+        </div>
+        <div style="flex: 1;">
+          <label for="filtroSala">Sala:</label>
+          <select id="filtroSala" name="filtroSala">
+            <option value="">Todas las salas</option>
+          </select>
+        </div>
+      </div>
+
       <label for="filtroFecha">Fecha:</label>
       <input type="date" id="filtroFecha" name="filtroFecha">
       <button type="button" id="btnFiltrarReservas" style="margin-top:1.2rem;width:100%;">Filtrar</button>
+      <button type="button" id="btnLimpiarFiltros" style="margin-top:0.5rem;width:100%;background:#045D18;color:#fff;">Limpiar filtros</button>
       <div id="msgReserva" class="msg" style="color:#045D18;"></div>
       <hr style="margin:2.2rem 0 1.2rem 0;">
       <h2 style="color:#b30000;">Eliminar Reserva</h2>
@@ -98,7 +113,57 @@
   </div>
 
   <script>
-    // Cargar reservas (puedes ajustar el endpoint y los campos según tu backend)
+    // Variables globales para almacenar los datos de espacios y salas
+    let tiposEspacio = [];
+    let espacios = [];
+
+    // Cargar tipos de espacio y espacios
+    async function cargarEspaciosYTipos() {
+      try {
+        // Cargar tipos de espacio
+        const resTipos = await fetch('http://localhost:3001/api/tipos-espacio');
+        const dataTipos = await resTipos.json();
+        if (dataTipos.success) {
+          tiposEspacio = dataTipos.tipos;
+          const selectTipos = document.getElementById('filtroTipoEspacio');
+          selectTipos.innerHTML = '<option value="">Todos los tipos</option>' + 
+            tiposEspacio.map(t => `<option value="${t.id_tipo_espacio}">${t.nombre}</option>`).join('');
+        }
+
+        // Cargar espacios
+        const resEspacios = await fetch('http://localhost:3001/api/espacios');
+        const dataEspacios = await resEspacios.json();
+        if (dataEspacios.success) {
+          espacios = dataEspacios.espacios;
+          actualizarSelectorSalas();
+        }
+      } catch (e) {
+        console.error('Error al cargar espacios:', e);
+      }
+    }
+
+    // Actualizar selector de salas según el tipo de espacio seleccionado
+    function actualizarSelectorSalas() {
+      const tipoSeleccionado = document.getElementById('filtroTipoEspacio').value;
+      const selectSalas = document.getElementById('filtroSala');
+      
+      selectSalas.innerHTML = '<option value="">Todas las salas</option>';
+      
+      if (espacios.length > 0) {
+        const salasFiltradas = tipoSeleccionado ? 
+          espacios.filter(e => e.id_tipo_espacio.toString() === tipoSeleccionado) : 
+          espacios;
+        
+        selectSalas.innerHTML += salasFiltradas
+          .map(e => `<option value="${e.id_espacio}">${e.nombre}</option>`)
+          .join('');
+      }
+    }
+
+    // Event listener para el cambio de tipo de espacio
+    document.getElementById('filtroTipoEspacio').addEventListener('change', actualizarSelectorSalas);
+
+    // Cargar reservas
     async function cargarReservas(filtros = {}) {
       const tbody = document.getElementById('reservaList');
       tbody.innerHTML = '<tr><td colspan="7">Cargando...</td></tr>';
@@ -106,16 +171,16 @@
         let url = 'http://localhost:3001/api/reservas-admin';
         const params = [];
         if (filtros.usuario) params.push(`usuario=${encodeURIComponent(filtros.usuario)}`);
-        if (filtros.espacio) params.push(`espacio=${encodeURIComponent(filtros.espacio)}`);
+        if (filtros.tipoEspacio) params.push(`tipo_espacio=${encodeURIComponent(filtros.tipoEspacio)}`);
+        if (filtros.sala) params.push(`espacio=${encodeURIComponent(filtros.sala)}`);
         if (filtros.fecha) params.push(`fecha=${encodeURIComponent(filtros.fecha)}`);
         if (params.length) url += '?' + params.join('&');
+        
         const res = await fetch(url);
         const data = await res.json();
         if (data.success && Array.isArray(data.reservas) && data.reservas.length > 0) {
           tbody.innerHTML = data.reservas.map(r => {
-            // Formatear fecha a YYYY-MM-DD
             const fecha = r.fecha ? r.fecha.slice(0,10) : '';
-            // Formatear horas a HH:MM
             const horaInicio = r.hora_inicio ? r.hora_inicio.slice(0,5) : '';
             const horaFin = r.hora_fin ? r.hora_fin.slice(0,5) : '';
             return `<tr>
@@ -135,14 +200,30 @@
         tbody.innerHTML = '<tr><td colspan="7">Error al cargar reservas.</td></tr>';
       }
     }
-    document.addEventListener('DOMContentLoaded', () => cargarReservas());
 
+    // Limpiar filtros
+    document.getElementById('btnLimpiarFiltros').onclick = function() {
+      document.getElementById('filtroUsuario').value = '';
+      document.getElementById('filtroTipoEspacio').value = '';
+      document.getElementById('filtroSala').value = '';
+      document.getElementById('filtroFecha').value = '';
+      cargarReservas();
+    };
+
+    // Event listener para el botón de filtrar
     document.getElementById('btnFiltrarReservas').onclick = function() {
       const usuario = document.getElementById('filtroUsuario').value.trim();
-      const espacio = document.getElementById('filtroEspacio').value.trim();
+      const tipoEspacio = document.getElementById('filtroTipoEspacio').value;
+      const sala = document.getElementById('filtroSala').value;
       const fecha = document.getElementById('filtroFecha').value;
-      cargarReservas({ usuario, espacio, fecha });
+      cargarReservas({ usuario, tipoEspacio, sala, fecha });
     };
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', () => {
+      cargarEspaciosYTipos();
+      cargarReservas();
+    });
 
     // Eliminar reserva
     let reservaAEliminar = null;
