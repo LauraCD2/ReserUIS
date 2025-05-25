@@ -24,17 +24,7 @@
       <form id="reservaFormCanchas">
         <label for="reservaEspacio">Sala:</label>
         <select id="reservaEspacio" name="reservaEspacio" required>
-          <option value="">Seleccionar espacio</option>
-          <option value="arena">Arena</option>
-          <option value="baloncesto">Baloncesto</option>
-          <option value="diamante">Diamante</option>
-          <option value="futbol">Fútbol</option>
-          <option value="primero_de_marzo">Primero de Marzo</option>
-          <option value="skatepark">Skatepark</option>
-          <option value="squash">Squash</option>
-          <option value="tenis">Tenis</option>
-          <option value="teqball">Teqball</option>
-          <option value="voleibol">Voleibol</option>
+          <option value="">Cargando espacios...</option>
         </select>
         <label for="reservaDate">Fecha:</label>
         <input type="date" id="reservaDate" name="reservaDate" required />
@@ -65,11 +55,74 @@
   </main>
   <script src="js/main.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', async function () {
+      // --- CARGA DINÁMICA DE ESPACIOS DE CANCHAS ---
+      const selectEspacio = document.getElementById('reservaEspacio');
+      let idTipoCanchas = null;
+      try {
+        // Obtener tipos de espacio y buscar el de Canchas
+        const tiposRes = await fetch('http://localhost:3001/api/tipos-espacio');
+        const tiposData = await tiposRes.json();
+        if (tiposData.success && Array.isArray(tiposData.tipos)) {
+          const tipoCanchas = tiposData.tipos.find(t => t.nombre.toLowerCase().includes('canchas'));
+          if (tipoCanchas) idTipoCanchas = tipoCanchas.id_tipo_espacio;
+        }
+        // Si no se encuentra, fallback a 3 (ajustar si es otro id)
+        if (!idTipoCanchas) idTipoCanchas = 3;
+        
+        // Obtener espacios y filtrar los de tipo Canchas
+        const espaciosRes = await fetch('http://localhost:3001/api/espacios');
+        const espaciosData = await espaciosRes.json();
+        let opciones = '<option value="">Seleccionar espacio</option>';
+        if (espaciosData.success && Array.isArray(espaciosData.espacios)) {
+          const espaciosCanchas = espaciosData.espacios.filter(e => e.id_tipo_espacio == idTipoCanchas);
+          espaciosCanchas.forEach(espacio => {
+            opciones += `<option value="${espacio.id_espacio}">${espacio.nombre}</option>`;
+          });
+        }
+        selectEspacio.innerHTML = opciones;
+
+        // Agregar evento para actualizar el calendario cuando se seleccione un espacio
+        selectEspacio.addEventListener('change', async function() {
+          const idEspacio = this.value;
+          const calendarDiv = document.getElementById('calendarSemana');
+          const calendarTitle = document.getElementById('calendarTitle');
+          
+          if (idEspacio) {
+            // Obtener el nombre del espacio seleccionado
+            const espacioNombre = this.options[this.selectedIndex].text;
+            
+            // Actualizar título del calendario
+            if (calendarTitle) {
+              calendarTitle.textContent = `Reservas de ${espacioNombre}`;
+            }
+            
+            // Mostrar mensaje de carga
+            if (calendarDiv) {
+              calendarDiv.innerHTML = '<p style="text-align:center;padding:1rem;">Cargando reservas...</p>';
+            }
+            
+            // Cargar el calendario para el espacio seleccionado
+            await cargarCalendarioSemana(parseInt(idEspacio));
+          } else {
+            // Si no hay espacio seleccionado, mostrar mensaje
+            if (calendarTitle) {
+              calendarTitle.textContent = 'Reservas de la semana';
+            }
+            if (calendarDiv) {
+              calendarDiv.innerHTML = '<p style="text-align:center;color:#666;padding:2rem;">Seleccione un espacio para ver sus reservas</p>';
+            }
+          }
+        });
+
+      } catch (e) {
+        console.error('Error cargando espacios:', e);
+        selectEspacio.innerHTML = '<option value="">Error cargando espacios</option>';
+      }
+
       const form = document.getElementById('reservaFormCanchas');
       const msgDiv = document.getElementById('reservaMsgCanchas');
       const fechaInput = document.getElementById('reservaDate');
-      const selectEspacio = document.getElementById('reservaEspacio');
 
       if (fechaInput) {
         const hoy = new Date();
@@ -92,78 +145,16 @@
         });
       }
 
-      // Agregar evento para actualizar el calendario cuando se seleccione un espacio
-      if (selectEspacio) {
-        selectEspacio.addEventListener('change', async function() {
-          const idEspacio = this.value;
-          const calendarDiv = document.getElementById('calendarSemana');
-          const calendarTitle = document.getElementById('calendarTitle');
-          
-          if (idEspacio) {
-            // Obtener el nombre del espacio seleccionado
-            const espacioNombre = this.options[this.selectedIndex].text;
-            
-            // Actualizar título del calendario
-            if (calendarTitle) {
-              calendarTitle.textContent = `Reservas de ${espacioNombre}`;
-            }
-            
-            // Mostrar mensaje de carga
-            if (calendarDiv) {
-              calendarDiv.innerHTML = '<p style="text-align:center;padding:1rem;">Cargando reservas...</p>';
-            }
-            
-            // Obtener el id_espacio según el valor seleccionado
-            const espacioMap = {
-              'futbol': 7,
-              'arena': 8,
-              'voleibol': 9,
-              'baloncesto': 10,
-              'tenis': 11,
-              'squash': 12,
-              'diamante': 13,
-              'primero_de_marzo': 14,
-              'skatepark': 15,
-              'teqball': 16
-            };
-            
-            // Cargar el calendario para el espacio seleccionado
-            await cargarCalendarioSemana(espacioMap[idEspacio]);
-          } else {
-            // Si no hay espacio seleccionado, mostrar mensaje
-            if (calendarTitle) {
-              calendarTitle.textContent = 'Reservas de la semana';
-            }
-            if (calendarDiv) {
-              calendarDiv.innerHTML = '<p style="text-align:center;color:#666;padding:2rem;">Seleccione un espacio para ver sus reservas</p>';
-            }
-          }
-        });
-      }
-
       if (form) {
         form.addEventListener('submit', async function (e) {
           e.preventDefault();
-          const espacioMap = {
-            'futbol': 7,
-            'arena': 8,
-            'voleibol': 9,
-            'baloncesto': 10,
-            'tenis': 11,
-            'squash': 12,
-            'diamante': 13,
-            'primero_de_marzo': 14,
-            'skatepark': 15,
-            'teqball': 16
-          };
           let id_usuario = localStorage.getItem('id_usuario');
           if (id_usuario) id_usuario = parseInt(id_usuario);
           const fechaInput = document.getElementById('reservaDate').value;
           const fecha = fechaInput ? new Date(fechaInput).toISOString().slice(0, 10) : '';
           const horario = document.getElementById('reservaHorario').value;
           const [hora_inicio, hora_fin] = horario.split('-');
-          const espacio = document.getElementById('reservaEspacio').value;
-          const id_espacio = espacioMap[espacio];
+          const id_espacio = parseInt(document.getElementById('reservaEspacio').value);
           msgDiv.textContent = '';
           msgDiv.style.color = 'black';
           msgDiv.style.display = 'none';
@@ -337,38 +328,14 @@
           offsetSemana--;
           const espacioSeleccionado = document.getElementById('reservaEspacio').value;
           if (espacioSeleccionado) {
-            const espacioMap = {
-              'futbol': 7,
-              'arena': 8,
-              'voleibol': 9,
-              'baloncesto': 10,
-              'tenis': 11,
-              'squash': 12,
-              'diamante': 13,
-              'primero_de_marzo': 14,
-              'skatepark': 15,
-              'teqball': 16
-            };
-            await cargarCalendarioSemana(espacioMap[espacioSeleccionado]);
+            await cargarCalendarioSemana(parseInt(espacioSeleccionado));
           }
         };
         next.onclick = async function() {
           offsetSemana++;
           const espacioSeleccionado = document.getElementById('reservaEspacio').value;
           if (espacioSeleccionado) {
-            const espacioMap = {
-              'futbol': 7,
-              'arena': 8,
-              'voleibol': 9,
-              'baloncesto': 10,
-              'tenis': 11,
-              'squash': 12,
-              'diamante': 13,
-              'primero_de_marzo': 14,
-              'skatepark': 15,
-              'teqball': 16
-            };
-            await cargarCalendarioSemana(espacioMap[espacioSeleccionado]);
+            await cargarCalendarioSemana(parseInt(espacioSeleccionado));
           }
         };
       }
