@@ -35,6 +35,42 @@
       font-size: 1rem;
       background: #f5f5f5;
     }
+
+    .filtros {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    
+    .filtros select {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      min-width: 200px;
+    }
+
+    .espacios-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .espacios-table th {
+      background: #045D18;
+      color: #fff;
+      padding: 8px 4px;
+      text-align: left;
+    }
+
+    .espacios-table td {
+      padding: 7px 4px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .espacios-table tr.hidden {
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -47,7 +83,6 @@
     </nav>
   </header>
 
-  
   <main class="formSection" style="display:flex;gap:3rem;align-items:flex-start;">
     <form id="spaceForm" style="min-width:340px;max-width:400px;flex:1;">
       <h2>Agregar Espacio</h2>
@@ -57,7 +92,6 @@
 
       <button type="button" id="btnCrearTipoEspacio" style="margin-bottom:18px;display:block;">Crear tipo de espacio</button>
       <div id="msgTipoEspacio" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
-
 
       <h2>Agregar Sala </h2>
 
@@ -74,15 +108,23 @@
 
     <section class="listSection" style="flex:1;min-width:320px;max-width:500px;">
       <h2>Espacios Registrados</h2>
-      <table style="width:100%;border-collapse:collapse;">
+      <section class="filtros">
+        <div>
+          <label for="tipoEspacio">Filtrar por Tipo de Espacio:</label>
+          <select id="tipoEspacio">
+            <option value="">Todos los espacios</option>
+          </select>
+        </div>
+      </section>
+      <table class="espacios-table">
         <thead>
-          <tr style="background:#045D18;color:#fff;">
-            <th style="padding:8px 4px;text-align:left;">Espacio</th>
-            <th style="padding:8px 4px;text-align:left;">Sala</th>
+          <tr>
+            <th>Espacio</th>
+            <th>Sala</th>
           </tr>
         </thead>
         <tbody id="spaceList">
-          <!-- Aquí se cargarán dinámicamente los espacios -->
+          <!-- Los espacios se cargarán dinámicamente aquí -->
         </tbody>
       </table>
     </section>
@@ -93,17 +135,21 @@
     // Cargar tipos de espacio desde la base de datos
     async function cargarTiposEspacio() {
       const select = document.getElementById('spaceType');
+      const filterSelect = document.getElementById('tipoEspacio');
       try {
         const res = await fetch('http://localhost:3001/api/tipos-espacio');
         const data = await res.json();
         if (data.success && Array.isArray(data.tipos)) {
-          select.innerHTML = '<option value="">Seleccionar tipo</option>' +
-            data.tipos.map(t => `<option value="${t.id_tipo_espacio}">${t.nombre}</option>`).join('');
+          const optionsHtml = data.tipos.map(t => `<option value="${t.id_tipo_espacio}">${t.nombre}</option>`).join('');
+          select.innerHTML = '<option value="">Seleccionar tipo</option>' + optionsHtml;
+          filterSelect.innerHTML = '<option value="">Todos los espacios</option>' + optionsHtml;
         } else {
           select.innerHTML = '<option value="">No hay tipos disponibles</option>';
+          filterSelect.innerHTML = '<option value="">No hay tipos disponibles</option>';
         }
       } catch (e) {
         select.innerHTML = '<option value="">Error al cargar tipos</option>';
+        filterSelect.innerHTML = '<option value="">Error al cargar tipos</option>';
       }
     }
     document.addEventListener('DOMContentLoaded', cargarTiposEspacio);
@@ -127,7 +173,7 @@
           // Ordenar por nombre de espacio (sala)
           data.espacios.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', {sensitivity:'base'}));
           tbody.innerHTML = data.espacios.map(e =>
-            `<tr><td style='padding:7px 4px;border-bottom:1px solid #eee;'>${tiposMap[e.id_tipo_espacio] || '-'}</td><td style='padding:7px 4px;border-bottom:1px solid #eee;'>${e.nombre}</td></tr>`
+            `<tr data-tipo-espacio="${e.id_tipo_espacio}"><td style='padding:7px 4px;border-bottom:1px solid #eee;'>${tiposMap[e.id_tipo_espacio] || '-'}</td><td style='padding:7px 4px;border-bottom:1px solid #eee;'>${e.nombre}</td></tr>`
           ).join('');
         } else {
           tbody.innerHTML = '<tr><td colspan="2">No hay espacios registrados.</td></tr>';
@@ -203,6 +249,20 @@
         msg.style.color = '#b30000';
       }
     };
+
+    // Filtrar espacios por tipo
+    document.getElementById('tipoEspacio').addEventListener('change', function() {
+      const tipoSeleccionado = this.value;
+      const rows = document.querySelectorAll('#spaceList tr[data-tipo-espacio]');
+      
+      rows.forEach(row => {
+        if (!tipoSeleccionado || row.dataset.tipoEspacio === tipoSeleccionado) {
+          row.classList.remove('hidden');
+        } else {
+          row.classList.add('hidden');
+        }
+      });
+    });
   </script>
 </body>
 </html>
