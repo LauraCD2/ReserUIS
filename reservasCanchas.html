@@ -53,11 +53,14 @@
       </form>
       <div id="reservaMsgCanchas" style="margin-top:10px;font-weight:bold;display:none;position:relative;"></div>
     </section>
-    <section class="calendarSection">
-      <h2>Reservas del mes</h2>
-      <div class="calendarPlaceholder">
-        <p>[Calendario o tabla de reservas irá aquí]</p>
+    <section class="calendarSection" style="display:flex;flex-direction:column;align-items:center;">
+      <h2 id="calendarTitle">Reservas de la semana</h2>
+      <div id="calendarNav" style="display:flex;align-items:center;gap:16px;margin-bottom:8px;">
+        <button id="semanaPrev" title="Semana anterior" style="font-size:1.5em;background:none;border:none;cursor:pointer;">&#8592;</button>
+        <span id="rangoSemana" style="font-weight:bold;font-size:1.1em;"></span>
+        <button id="semanaNext" title="Semana siguiente" style="font-size:1.5em;background:none;border:none;cursor:pointer;">&#8594;</button>
       </div>
+      <div id="calendarSemana" style="width:100%;max-width:700px;margin:0 auto 1.5rem auto;"></div>
     </section>
   </main>
   <script src="js/main.js"></script>
@@ -66,6 +69,8 @@
       const form = document.getElementById('reservaFormCanchas');
       const msgDiv = document.getElementById('reservaMsgCanchas');
       const fechaInput = document.getElementById('reservaDate');
+      const selectEspacio = document.getElementById('reservaEspacio');
+
       if (fechaInput) {
         const hoy = new Date();
         hoy.setDate(hoy.getDate() + 1);
@@ -86,20 +91,70 @@
           }
         });
       }
+
+      // Agregar evento para actualizar el calendario cuando se seleccione un espacio
+      if (selectEspacio) {
+        selectEspacio.addEventListener('change', async function() {
+          const idEspacio = this.value;
+          const calendarDiv = document.getElementById('calendarSemana');
+          const calendarTitle = document.getElementById('calendarTitle');
+          
+          if (idEspacio) {
+            // Obtener el nombre del espacio seleccionado
+            const espacioNombre = this.options[this.selectedIndex].text;
+            
+            // Actualizar título del calendario
+            if (calendarTitle) {
+              calendarTitle.textContent = `Reservas de ${espacioNombre}`;
+            }
+            
+            // Mostrar mensaje de carga
+            if (calendarDiv) {
+              calendarDiv.innerHTML = '<p style="text-align:center;padding:1rem;">Cargando reservas...</p>';
+            }
+            
+            // Obtener el id_espacio según el valor seleccionado
+            const espacioMap = {
+              'futbol': 7,
+              'arena': 8,
+              'voleibol': 9,
+              'baloncesto': 10,
+              'tenis': 11,
+              'squash': 12,
+              'diamante': 13,
+              'primero_de_marzo': 14,
+              'skatepark': 15,
+              'teqball': 16
+            };
+            
+            // Cargar el calendario para el espacio seleccionado
+            await cargarCalendarioSemana(espacioMap[idEspacio]);
+          } else {
+            // Si no hay espacio seleccionado, mostrar mensaje
+            if (calendarTitle) {
+              calendarTitle.textContent = 'Reservas de la semana';
+            }
+            if (calendarDiv) {
+              calendarDiv.innerHTML = '<p style="text-align:center;color:#666;padding:2rem;">Seleccione un espacio para ver sus reservas</p>';
+            }
+          }
+        });
+      }
+
       if (form) {
         form.addEventListener('submit', async function (e) {
           e.preventDefault();
           const espacioMap = {
-            futbol: 7,
-            arena: 8,
-            voleibol: 9,
-            baloncesto: 10,
-            tenis: 11,
-            squash: 12,
-            diamante: 13,
-            primero_de_marzo: 14,
-            skatepark: 15,
-            teqball: 16
+            'futbol': 7,
+            'arena': 8,
+            'voleibol': 9,
+            'baloncesto': 10,
+            'tenis': 11,
+            'squash': 12,
+            'diamante': 13,
+            'primero_de_marzo': 14,
+            'skatepark': 15,
+            'teqball': 16
           };
           let id_usuario = localStorage.getItem('id_usuario');
           if (id_usuario) id_usuario = parseInt(id_usuario);
@@ -140,6 +195,10 @@
             if (response.ok && data.success) {
               mostrarMensaje('Reserva realizada con éxito', 'green', true);
               form.reset();
+              // Actualizar el calendario después de una reserva exitosa
+              if (id_espacio) {
+                await cargarCalendarioSemana(id_espacio);
+              }
             } else {
               mostrarMensaje(data.message || 'No se pudo realizar la reserva', 'red');
             }
@@ -148,8 +207,9 @@
           }
         });
       }
+
       function mostrarMensaje(msg, color, exito = false) {
-        msgDiv.innerHTML = `<span>${msg}</span><button id='cerrarMsgCanchas' style='position:absolute;right:8px;top:4px;background:none;border:none;font-size:1.2em;cursor:pointer;'>&times;</button>`;
+        msgDiv.innerHTML = `<span>${msg}</span><button id='cerrarMsg' style='position:absolute;right:8px;top:4px;background:none;border:none;font-size:1.2em;cursor:pointer;'>&times;</button>`;
         msgDiv.style.color = color;
         msgDiv.style.display = 'block';
         msgDiv.style.background = exito ? '#e6ffe6' : '#fff0f0';
@@ -159,8 +219,157 @@
         msgDiv.style.position = 'relative';
         msgDiv.style.marginTop = '12px';
         msgDiv.style.boxShadow = '0 2px 8px #0001';
-        document.getElementById('cerrarMsgCanchas').onclick = function() {
+        document.getElementById('cerrarMsg').onclick = function() {
           msgDiv.style.display = 'none';
+        };
+      }
+    });
+
+    // --- CALENDARIO SEMANAL ---
+    let offsetSemana = 0; // 0 = semana actual, -1 = anterior, +1 = siguiente, etc.
+
+    async function cargarCalendarioSemana(idEspacio) {
+      const calendarDiv = document.getElementById('calendarSemana');
+      const rangoSemanaSpan = document.getElementById('rangoSemana');
+      if (!calendarDiv || !idEspacio) return;
+
+      // Definir días y bloques horarios
+      const dias = ['Lun','Mar','Mié','Jue','Vie'];
+      const bloques = [
+        '06:00-08:00','08:00-10:00','10:00-12:00',
+        '12:00-14:00','14:00-16:00','16:00-18:00','18:00-20:00'
+      ];
+
+      // Calcular lunes de la semana con offset
+      const hoy = new Date();
+      const diaSemana = hoy.getDay() === 0 ? 6 : hoy.getDay() - 1; // 0=Domingo
+      const lunes = new Date(hoy);
+      lunes.setDate(hoy.getDate() - diaSemana + offsetSemana*7);
+
+      // Armar fechas de la semana
+      const fechas = [];
+      for(let i=0;i<5;i++) {
+        const f = new Date(lunes);
+        f.setDate(lunes.getDate()+i);
+        fechas.push(f.toISOString().slice(0,10));
+      }
+
+      // Mostrar rango de la semana
+      if (rangoSemanaSpan) {
+        const f0 = fechas[0].split('-');
+        const f4 = fechas[4].split('-');
+        rangoSemanaSpan.textContent = `${f0[2]}/${f0[1]}/${f0[0]} - ${f4[2]}/${f4[1]}/${f4[0]}`;
+      }
+
+      // Consultar reservas para el espacio seleccionado
+      let reservasEspacio = [];
+      try {
+        const res = await fetch(`http://localhost:3001/api/reservas-admin?ids_espacio=${idEspacio}&fecha_semana=${fechas[0]}`);
+        const data = await res.json();
+        if (data.success && Array.isArray(data.reservas)) {
+          reservasEspacio = data.reservas.filter(r => r.id_espacio === idEspacio);
+        }
+      } catch (error) {
+        console.error('Error al cargar reservas:', error);
+        calendarDiv.innerHTML = '<p style="text-align:center;color:#b30000;padding:2rem;">Error al cargar las reservas</p>';
+        return;
+      }
+
+      // Crear matriz de ocupación
+      const ocupacion = {};
+      fechas.forEach(f=>{ ocupacion[f]={}; bloques.forEach(b=>{ocupacion[f][b]=false;}); });
+      reservasEspacio.forEach(r => {
+        const fecha = r.fecha ? r.fecha.slice(0,10) : '';
+        const bloque = `${r.hora_inicio.slice(0,5)}-${r.hora_fin.slice(0,5)}`;
+        if (ocupacion[fecha] && ocupacion[fecha][bloque] !== undefined) {
+          ocupacion[fecha][bloque] = true;
+        }
+      });
+
+      // Renderizar tabla visual
+      let html = '<table style="border-collapse:collapse;margin-top:0;width:100%;max-width:700px;font-size:1.08rem;">';
+      html += '<tr><th style="background:#fff;color:#fff;padding:10px 8px;width:110px;"></th>';
+      dias.forEach((d,i)=>{
+        html += `<th style="background:${i>=0&&i<=4?'#045D18':'#fff'};color:${i>=0&&i<=4?'#fff':'#045D18'};padding:10px 12px;font-size:1.08em;">${d}<br>${fechas[i].slice(5).replace('-','/')}</th>`;
+      });
+      html += '</tr>';
+      bloques.forEach(bloque=>{
+        html += `<tr><td style='font-weight:bold;padding:10px 8px;width:110px;'>${bloque}</td>`;
+        fechas.forEach(f=>{
+          let ocupado = ocupacion[f][bloque];
+          if (ocupado) {
+            html += `<td style='padding:10px 12px;background:rgba(255,60,60,0.18);color:#b30000;text-align:center;border:1px solid #eee;'>Ocupado</td>`;
+          } else {
+            html += `<td style='padding:10px 12px;background:rgba(46,204,64,0.13);color:#045D18;text-align:center;border:1px solid #eee;'>Libre</td>`;
+          }
+        });
+        html += '</tr>';
+      });
+      html += '</table>';
+      calendarDiv.innerHTML = html;
+
+      // Bloquear navegación a semanas anteriores a la actual
+      const prev = document.getElementById('semanaPrev');
+      if (prev) {
+        if (offsetSemana <= 0) {
+          prev.disabled = true;
+          prev.style.opacity = 0.4;
+          prev.style.cursor = 'not-allowed';
+        } else {
+          prev.disabled = false;
+          prev.style.opacity = 1;
+          prev.style.cursor = 'pointer';
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Inicialmente mostrar mensaje de selección
+      const calendarDiv = document.getElementById('calendarSemana');
+      if (calendarDiv) {
+        calendarDiv.innerHTML = '<p style="text-align:center;color:#666;padding:2rem;">Seleccione un espacio para ver sus reservas</p>';
+      }
+
+      const prev = document.getElementById('semanaPrev');
+      const next = document.getElementById('semanaNext');
+      if (prev && next) {
+        prev.onclick = async function() {
+          offsetSemana--;
+          const espacioSeleccionado = document.getElementById('reservaEspacio').value;
+          if (espacioSeleccionado) {
+            const espacioMap = {
+              'futbol': 7,
+              'arena': 8,
+              'voleibol': 9,
+              'baloncesto': 10,
+              'tenis': 11,
+              'squash': 12,
+              'diamante': 13,
+              'primero_de_marzo': 14,
+              'skatepark': 15,
+              'teqball': 16
+            };
+            await cargarCalendarioSemana(espacioMap[espacioSeleccionado]);
+          }
+        };
+        next.onclick = async function() {
+          offsetSemana++;
+          const espacioSeleccionado = document.getElementById('reservaEspacio').value;
+          if (espacioSeleccionado) {
+            const espacioMap = {
+              'futbol': 7,
+              'arena': 8,
+              'voleibol': 9,
+              'baloncesto': 10,
+              'tenis': 11,
+              'squash': 12,
+              'diamante': 13,
+              'primero_de_marzo': 14,
+              'skatepark': 15,
+              'teqball': 16
+            };
+            await cargarCalendarioSemana(espacioMap[espacioSeleccionado]);
+          }
         };
       }
     });
