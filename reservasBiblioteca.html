@@ -44,7 +44,7 @@
       <div id="reservaMsg" style="margin-top:10px;font-weight:bold;display:none;position:relative;"></div>
     </section>
     <section class="calendarSection" style="display:flex;flex-direction:column;align-items:center;">
-      <h2>Reservas de la semana</h2>
+      <h2 id="calendarTitle">Reservas de la semana</h2>
       <div id="calendarNav" style="display:flex;align-items:center;gap:16px;margin-bottom:8px;">
         <button id="semanaPrev" title="Semana anterior" style="font-size:1.5em;background:none;border:none;cursor:pointer;">&#8592;</button>
         <span id="rangoSemana" style="font-weight:bold;font-size:1.1em;"></span>
@@ -68,6 +68,7 @@
         }
         // Si no se encuentra, fallback a 2 (ajustar si es otro id)
         if (!idTipoBiblioteca) idTipoBiblioteca = 2;
+        
         // Obtener espacios y filtrar los de tipo Biblioteca
         const espaciosRes = await fetch('http://localhost:3001/api/espacios');
         const espaciosData = await espaciosRes.json();
@@ -79,7 +80,42 @@
           });
         }
         selectEspacio.innerHTML = opciones;
+
+        // Agregar evento para actualizar el calendario cuando se seleccione un espacio
+        selectEspacio.addEventListener('change', async function() {
+          const idEspacio = this.value;
+          const calendarDiv = document.getElementById('calendarSemana');
+          const calendarTitle = document.getElementById('calendarTitle');
+          
+          if (idEspacio) {
+            // Obtener el nombre del espacio seleccionado
+            const espacioNombre = this.options[this.selectedIndex].text;
+            
+            // Actualizar título del calendario
+            if (calendarTitle) {
+              calendarTitle.textContent = `Reservas de ${espacioNombre}`;
+            }
+            
+            // Mostrar mensaje de carga
+            if (calendarDiv) {
+              calendarDiv.innerHTML = '<p style="text-align:center;padding:1rem;">Cargando reservas...</p>';
+            }
+            
+            // Cargar el calendario para el espacio seleccionado
+            await cargarCalendarioSemana(parseInt(idEspacio));
+          } else {
+            // Si no hay espacio seleccionado, mostrar mensaje
+            if (calendarTitle) {
+              calendarTitle.textContent = 'Reservas de la semana';
+            }
+            if (calendarDiv) {
+              calendarDiv.innerHTML = '<p style="text-align:center;color:#666;padding:2rem;">Seleccione un espacio para ver sus reservas</p>';
+            }
+          }
+        });
+
       } catch (e) {
+        console.error('Error cargando espacios:', e);
         selectEspacio.innerHTML = '<option value="">Error cargando salas</option>';
       }
       const form = document.getElementById('reservaFormBiblioteca');
@@ -172,21 +208,25 @@
     });
     // --- CALENDARIO SEMANAL ---
     let offsetSemana = 0; // 0 = semana actual, -1 = anterior, +1 = siguiente, etc.
-    async function cargarCalendarioSemana() {
+
+    async function cargarCalendarioSemana(idEspacio) {
       const calendarDiv = document.getElementById('calendarSemana');
       const rangoSemanaSpan = document.getElementById('rangoSemana');
-      if (!calendarDiv) return;
+      if (!calendarDiv || !idEspacio) return;
+
       // Definir días y bloques horarios
       const dias = ['Lun','Mar','Mié','Jue','Vie'];
       const bloques = [
         '06:00-08:00','08:00-10:00','10:00-12:00',
         '12:00-14:00','14:00-16:00','16:00-18:00','18:00-20:00'
       ];
+
       // Calcular lunes de la semana con offset
       const hoy = new Date();
       const diaSemana = hoy.getDay() === 0 ? 6 : hoy.getDay() - 1; // 0=Domingo
       const lunes = new Date(hoy);
       lunes.setDate(hoy.getDate() - diaSemana + offsetSemana*7);
+
       // Armar fechas de la semana
       const fechas = [];
       for(let i=0;i<5;i++) {
@@ -194,50 +234,41 @@
         f.setDate(lunes.getDate()+i);
         fechas.push(f.toISOString().slice(0,10));
       }
+
       // Mostrar rango de la semana
       if (rangoSemanaSpan) {
         const f0 = fechas[0].split('-');
         const f4 = fechas[4].split('-');
         rangoSemanaSpan.textContent = `${f0[2]}/${f0[1]}/${f0[0]} - ${f4[2]}/${f4[1]}/${f4[0]}`;
       }
-      // IDs de espacio de biblioteca
-      const idsEspacioBiblioteca = [4,5,6];
-      // Consultar reservas de la semana para la biblioteca (todas las personas, solo esos espacios)
-      let reservasSemana = [];
+
+      // Consultar reservas para el espacio seleccionado
+      let reservasEspacio = [];
       try {
-        const res = await fetch(`http://localhost:3001/api/reservas-admin?ids_espacio=${idsEspacioBiblioteca.join(',')}&fecha_semana=${fechas[0]}`);
+        const res = await fetch(`http://localhost:3001/api/reservas-admin?ids_espacio=${idEspacio}&fecha_semana=${fechas[0]}`);
         const data = await res.json();
-        if (data.success && Array.isArray(data.reservas)) reservasSemana = data.reservas;
-      } catch {}
+        if (data.success && Array.isArray(data.reservas)) {
+          reservasEspacio = data.reservas.filter(r => r.id_espacio === idEspacio);
+        }
+      } catch (error) {
+        console.error('Error al cargar reservas:', error);
+        calendarDiv.innerHTML = '<p style="text-align:center;color:#b30000;padding:2rem;">Error al cargar las reservas</p>';
+        return;
+      }
+
       // Crear matriz de ocupación
       const ocupacion = {};
       fechas.forEach(f=>{ ocupacion[f]={}; bloques.forEach(b=>{ocupacion[f][b]=false;}); });
-      reservasSemana.forEach(r => {
+      reservasEspacio.forEach(r => {
         const fecha = r.fecha ? r.fecha.slice(0,10) : '';
         const bloque = `${r.hora_inicio.slice(0,5)}-${r.hora_fin.slice(0,5)}`;
         if (ocupacion[fecha] && ocupacion[fecha][bloque] !== undefined) {
           ocupacion[fecha][bloque] = true;
         }
       });
+
       // Renderizar tabla visual
-      let id_usuario_actual = localStorage.getItem('id_usuario');
-      if (id_usuario_actual) id_usuario_actual = parseInt(id_usuario_actual);
-      // Crear matriz de reservas por usuario (sin redeclarar ocupacion)
-      const reservasUsuario = {};
-      fechas.forEach(f=>{ 
-        reservasUsuario[f]={};
-        bloques.forEach(b=>{
-          reservasUsuario[f][b]=false;
-        });
-      });
-      reservasSemana.forEach(r => {
-        const fecha = r.fecha ? r.fecha.slice(0,10) : '';
-        const bloque = `${r.hora_inicio.slice(0,5)}-${r.hora_fin.slice(0,5)}`;
-        if (id_usuario_actual && r.id_usuario == id_usuario_actual && reservasUsuario[fecha] && reservasUsuario[fecha][bloque] !== undefined) {
-          reservasUsuario[fecha][bloque] = true;
-        }
-      });
-      let html = '<table style="border-collapse:collapse;margin-top:0;margin-left:-10px;margin-right:0;width:100%;max-width:700px;font-size:1.08rem;">';
+      let html = '<table style="border-collapse:collapse;margin-top:0;width:100%;max-width:700px;font-size:1.08rem;">';
       html += '<tr><th style="background:#fff;color:#fff;padding:10px 8px;width:110px;"></th>';
       dias.forEach((d,i)=>{
         html += `<th style="background:${i>=0&&i<=4?'#045D18':'#fff'};color:${i>=0&&i<=4?'#fff':'#045D18'};padding:10px 12px;font-size:1.08em;">${d}<br>${fechas[i].slice(5).replace('-','/')}</th>`;
@@ -271,19 +302,32 @@
           prev.style.cursor = 'pointer';
         }
       }
-      // Quitar margen inferior del contenedor para pegar la tabla a las fechas
-      calendarDiv.parentElement.style.marginBottom = '0';
-      // Desplazar la tabla a la izquierda (alineada a las horas)
-      calendarDiv.style.marginLeft = '-40px';
-      calendarDiv.style.marginRight = '0';
     }
+
     document.addEventListener('DOMContentLoaded', function() {
-      cargarCalendarioSemana();
+      // Inicialmente mostrar mensaje de selección
+      const calendarDiv = document.getElementById('calendarSemana');
+      if (calendarDiv) {
+        calendarDiv.innerHTML = '<p style="text-align:center;color:#666;padding:2rem;">Seleccione un espacio para ver sus reservas</p>';
+      }
+
       const prev = document.getElementById('semanaPrev');
       const next = document.getElementById('semanaNext');
       if (prev && next) {
-        prev.onclick = function() { offsetSemana--; cargarCalendarioSemana(); };
-        next.onclick = function() { offsetSemana++; cargarCalendarioSemana(); };
+        prev.onclick = async function() {
+          offsetSemana--;
+          const espacioSeleccionado = document.getElementById('reservaEspacio').value;
+          if (espacioSeleccionado) {
+            await cargarCalendarioSemana(parseInt(espacioSeleccionado));
+          }
+        };
+        next.onclick = async function() {
+          offsetSemana++;
+          const espacioSeleccionado = document.getElementById('reservaEspacio').value;
+          if (espacioSeleccionado) {
+            await cargarCalendarioSemana(parseInt(espacioSeleccionado));
+          }
+        };
       }
     });
   </script>
