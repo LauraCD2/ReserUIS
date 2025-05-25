@@ -182,6 +182,10 @@
             if (response.ok && data.success) {
               mostrarMensaje('Reserva realizada con éxito', 'green', true);
               form.reset();
+              // Actualizar el calendario después de una reserva exitosa
+              if (id_espacio) {
+                await cargarCalendarioSemana(parseInt(id_espacio));
+              }
             } else {
               mostrarMensaje(data.message || 'No se pudo realizar la reserva', 'red');
             }
