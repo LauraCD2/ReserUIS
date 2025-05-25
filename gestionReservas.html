@@ -80,7 +80,7 @@
       <h2>Reservas Registradas</h2>
       <table>
         <thead>
-          <tr><th>ID</th><th>Usuario</th><th>Espacio</th><th>Sala</th><th>Fecha</th><th>Hora</th></tr>
+          <tr><th>ID</th><th>Usuario</th><th>Código</th><th>Espacio</th><th>Sala</th><th>Fecha</th><th>Hora</th></tr>
         </thead>
         <tbody id="reservaList">
           <!-- Reservas cargadas dinámicamente -->
@@ -101,7 +101,7 @@
     // Cargar reservas (puedes ajustar el endpoint y los campos según tu backend)
     async function cargarReservas(filtros = {}) {
       const tbody = document.getElementById('reservaList');
-      tbody.innerHTML = '<tr><td colspan="6">Cargando...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7">Cargando...</td></tr>';
       try {
         let url = 'http://localhost:3001/api/reservas-admin';
         const params = [];
@@ -118,13 +118,21 @@
             // Formatear horas a HH:MM
             const horaInicio = r.hora_inicio ? r.hora_inicio.slice(0,5) : '';
             const horaFin = r.hora_fin ? r.hora_fin.slice(0,5) : '';
-            return `<tr><td>${r.id_reserva}</td><td>${r.usuario}</td><td>${r.tipo_espacio}</td><td>${r.sala}</td><td>${fecha}</td><td>${horaInicio} - ${horaFin}</td></tr>`;
+            return `<tr>
+              <td>${r.id_reserva}</td>
+              <td>${r.usuario}</td>
+              <td>${r.codigo}</td>
+              <td>${r.tipo_espacio}</td>
+              <td>${r.sala}</td>
+              <td>${fecha}</td>
+              <td>${horaInicio} - ${horaFin}</td>
+            </tr>`;
           }).join('');
         } else {
-          tbody.innerHTML = '<tr><td colspan="6">No hay reservas registradas.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7">No hay reservas registradas.</td></tr>';
         }
       } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="6">Error al cargar reservas.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7">Error al cargar reservas.</td></tr>';
       }
     }
     document.addEventListener('DOMContentLoaded', () => cargarReservas());

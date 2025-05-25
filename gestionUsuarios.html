@@ -87,6 +87,21 @@
     </form>
     <section class="listSection">
       <h2>Usuarios Registrados</h2>
+      <div style="margin-bottom: 20px;">
+        <div style="margin-bottom: 10px;">
+          <label for="buscarUsuario">Buscar por nombre o código:</label>
+          <input type="text" id="buscarUsuario" placeholder="Nombre o código del usuario">
+        </div>
+        <div>
+          <label for="filtroTipo">Filtrar por tipo:</label>
+          <select id="filtroTipo">
+            <option value="">Todos los tipos</option>
+            <option value="1">Estudiante</option>
+            <option value="2">Profesor</option>
+            <option value="3">Administrativo</option>
+          </select>
+        </div>
+      </div>
       <table>
         <thead>
           <tr><th>Nombre</th><th>Código</th><th>Tipo</th></tr>
@@ -108,6 +123,38 @@
   </div>
 
   <script>
+    let usuariosData = []; // Variable global para almacenar los usuarios
+
+    // Función para filtrar usuarios
+    function filtrarUsuarios() {
+      const busqueda = document.getElementById('buscarUsuario').value.toLowerCase();
+      const tipoFiltro = document.getElementById('filtroTipo').value;
+      
+      const usuariosFiltrados = usuariosData.filter(usuario => {
+        const coincideNombreOCodigo = usuario.nombre.toLowerCase().includes(busqueda) || 
+                                     usuario.codigo.toLowerCase().includes(busqueda);
+        const coincideTipo = !tipoFiltro || usuario.id_tipo_usuario.toString() === tipoFiltro;
+        
+        return coincideNombreOCodigo && coincideTipo;
+      });
+      
+      actualizarTablaUsuarios(usuariosFiltrados);
+    }
+
+    // Función para actualizar la tabla con los usuarios filtrados
+    function actualizarTablaUsuarios(usuarios) {
+      const tbody = document.getElementById('userList');
+      const tipos = {1:'Estudiante',2:'Profesor',3:'Administrativo',4:'Admin'};
+      
+      if (usuarios.length > 0) {
+        tbody.innerHTML = usuarios.map(u =>
+          `<tr><td>${u.nombre}</td><td>${u.codigo}</td><td>${tipos[u.id_tipo_usuario]||'-'}</td></tr>`
+        ).join('');
+      } else {
+        tbody.innerHTML = '<tr><td colspan="3">No se encontraron usuarios.</td></tr>';
+      }
+    }
+
     // Cargar usuarios
     async function cargarUsuarios() {
       const tbody = document.getElementById('userList');
@@ -115,13 +162,9 @@
       try {
         const res = await fetch('http://localhost:3001/api/usuarios');
         const data = await res.json();
-        const tipos = {1:'Estudiante',2:'Profesor',3:'Administrativo',4:'Admin'};
-        if (data.success && Array.isArray(data.usuarios) && data.usuarios.length > 0) {
-          // Ordenar por tipo de usuario (1=Estudiante, 2=Profesor, 3=Administrativo)
-          data.usuarios.sort((a, b) => a.id_tipo_usuario - b.id_tipo_usuario);
-          tbody.innerHTML = data.usuarios.map(u =>
-            `<tr><td>${u.nombre}</td><td>${u.codigo}</td><td>${tipos[u.id_tipo_usuario]||'-'}</td></tr>`
-          ).join('');
+        if (data.success && Array.isArray(data.usuarios)) {
+          usuariosData = data.usuarios.sort((a, b) => a.id_tipo_usuario - b.id_tipo_usuario);
+          actualizarTablaUsuarios(usuariosData);
         } else {
           tbody.innerHTML = '<tr><td colspan="3">No hay usuarios registrados.</td></tr>';
         }
@@ -129,6 +172,11 @@
         tbody.innerHTML = '<tr><td colspan="3">Error al cargar usuarios.</td></tr>';
       }
     }
+
+    // Event listeners para los filtros
+    document.getElementById('buscarUsuario').addEventListener('input', filtrarUsuarios);
+    document.getElementById('filtroTipo').addEventListener('change', filtrarUsuarios);
+
     document.addEventListener('DOMContentLoaded', cargarUsuarios);
 
     // Agregar usuario
