@@ -5,6 +5,52 @@
   <meta charset="UTF-8" />
   <title>Reservas CENTIC | ReserUIS</title>
   <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .mainHeader {
+      background: #045D18;
+      padding: 1.5rem 2rem;
+      color: white;
+      box-shadow: 0 2px 10px rgba(4, 93, 24, 0.2);
+    }
+
+    .mainHeader nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    .mainHeader nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .mainHeader nav a:not([href="logout.html"]):hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: white;
+      transform: translateY(-1px);
+    }
+
+    .mainHeader nav a[href="logout.html"] {
+      background: rgba(220, 53, 69, 0.1);
+      color: #fff;
+      border: 1px solid rgba(220, 53, 69, 0.5);
+    }
+
+    .mainHeader nav a[href="logout.html"]:hover {
+      background: #dc3545;
+      border-color: #dc3545;
+      transform: translateY(-1px);
+    }
+  </style>
 </head>
 <body>
   <header class="mainHeader">
