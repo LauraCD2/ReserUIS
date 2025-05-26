@@ -1,8 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
-// Importar modelo de reserva
+// Importar modelos
 const reservaModel = require('./models/reserva');
+const espacioModel = require('./models/espacio');
+const tipoEspacioModel = require('./models/tipo_espacio');
 
 const app = express();
 const port = 3001; // El backend correrá en el puerto 3001
@@ -355,6 +357,69 @@ app.get('/api/reservas-admin', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Error al obtener reservas' });
+  }
+});
+
+// Actualizar espacio
+app.put('/api/espacios/:id', async (req, res) => {
+  console.log('1. Iniciando actualización de espacio');
+  console.log('Datos recibidos:', { id: req.params.id, ...req.body });
+
+  const { id } = req.params;
+  const { nombre, id_tipo_espacio } = req.body;
+
+  if (!nombre || !id_tipo_espacio) {
+    console.log('2. Error: Faltan datos requeridos');
+    return res.json({ success: false, message: 'Faltan datos requeridos' });
+  }
+
+  try {
+    console.log('3. Verificando si el espacio existe');
+    // Verificar si el espacio existe
+    const espacioExistente = await pool.query('SELECT * FROM espacio WHERE id_espacio = $1', [id]);
+    console.log('Resultado búsqueda espacio:', espacioExistente.rows);
+    
+    if (espacioExistente.rows.length === 0) {
+      console.log('4. Error: Espacio no encontrado');
+      return res.json({ success: false, message: 'Espacio no encontrado' });
+    }
+
+    console.log('5. Verificando si el tipo de espacio existe');
+    // Verificar si el tipo de espacio existe
+    const tipoExistente = await pool.query('SELECT * FROM tipo_espacio WHERE id_tipo_espacio = $1', [id_tipo_espacio]);
+    console.log('Resultado búsqueda tipo:', tipoExistente.rows);
+    
+    if (tipoExistente.rows.length === 0) {
+      console.log('6. Error: Tipo de espacio no válido');
+      return res.json({ success: false, message: 'Tipo de espacio no válido' });
+    }
+
+    console.log('7. Verificando si el nombre ya existe');
+    // Verificar si el nombre ya existe para otro espacio
+    const espacioNombre = await pool.query('SELECT * FROM espacio WHERE nombre = $1 AND id_espacio != $2', [nombre, id]);
+    console.log('Resultado búsqueda nombre duplicado:', espacioNombre.rows);
+    
+    if (espacioNombre.rows.length > 0) {
+      console.log('8. Error: Nombre duplicado');
+      return res.json({ success: false, message: 'Ya existe un espacio con ese nombre' });
+    }
+
+    console.log('9. Intentando actualizar el espacio');
+    // Actualizar el espacio usando el modelo
+    const espacioActualizado = await espacioModel.updateEspacio(id, { nombre, id_tipo_espacio });
+    console.log('Resultado actualización:', espacioActualizado);
+    
+    if (espacioActualizado) {
+      console.log('10. Éxito: Espacio actualizado correctamente');
+      res.json({ success: true, message: 'Espacio actualizado correctamente', espacio: espacioActualizado });
+    } else {
+      console.log('11. Error: No se pudo actualizar el espacio');
+      res.json({ success: false, message: 'No se pudo actualizar el espacio' });
+    }
+  } catch (error) {
+    console.error('12. Error en el proceso de actualización:', error);
+    console.error('Stack trace:', error.stack);
+    res.json({ success: false, message: 'Error al actualizar el espacio', error: error.message });
   }
 });
 

@@ -86,6 +86,35 @@
       background: #034713;
     }
 
+    .btn-guardar {
+      background: #045D18;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .btn-guardar:hover {
+      background: #034713;
+    }
+
+    .btn-cancelar {
+      background: #666;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: 4px;
+    }
+
+    .btn-cancelar:hover {
+      background: #555;
+    }
+
     .btn-eliminar {
       background: #b30000;
       color: white;
@@ -105,6 +134,32 @@
       display: flex;
       justify-content: center;
       gap: 4px;
+    }
+
+    .editable-cell {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .editable-cell input,
+    .editable-cell select {
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      width: auto;
+      margin: 0;
+    }
+
+    .editable-cell span {
+      padding: 4px 0;
+    }
+
+    .error-message {
+      color: #b30000;
+      font-size: 0.8rem;
+      margin-top: 4px;
     }
 
     /* Modal de confirmación para eliminar */
@@ -205,27 +260,50 @@
   </header>
 
   <main class="formSection" style="display:flex;gap:3rem;align-items:flex-start;">
-    <form id="spaceForm" style="min-width:340px;max-width:400px;flex:1;">
-      <h2>Agregar Espacio</h2>
+    <div style="min-width:340px;max-width:400px;flex:1;">
+      <form id="spaceForm">
+        <h2>Agregar Espacio</h2>
 
-      <label for="spaceName">Nombre del Espacio:</label>
-      <input type="text" id="spaceName" name="spaceName" placeholder="Ej: Coliseo" required>
+        <label for="spaceName">Nombre del Espacio:</label>
+        <input type="text" id="spaceName" name="spaceName" placeholder="Ej: Coliseo" required>
 
-      <button type="button" id="btnCrearTipoEspacio" style="margin-bottom:18px;display:block;">Crear tipo de espacio</button>
-      <div id="msgTipoEspacio" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
+        <button type="button" id="btnCrearTipoEspacio" style="margin-bottom:18px;display:block;">Crear tipo de espacio</button>
+        <div id="msgTipoEspacio" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
+      </form>
 
-      <h2>Agregar Sala </h2>
+      <form id="salaForm">
+        <h2>Agregar Sala</h2>
 
-      <label for="salaName">Nombre de la Sala:</label>
-      <input type="text" id="salaName" name="salaName" placeholder="Ej: Gimnasio" required>
+        <label for="salaName">Nombre de la Sala:</label>
+        <input type="text" id="salaName" name="salaName" placeholder="Ej: Gimnasio" required>
 
-      <label for="spaceType">Tipo de espacio:</label>
-      <select id="spaceType" name="spaceType" required>
-        <option value="">Cargando tipos...</option>
-      </select>
-      <button type="button" id="btnCrearSala">Crear sala</button>
-      <div id="msgSala" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
-    </form>
+        <label for="spaceType">Tipo de espacio:</label>
+        <select id="spaceType" name="spaceType" required>
+          <option value="">Cargando tipos...</option>
+        </select>
+        <button type="button" id="btnCrearSala">Crear sala</button>
+        <div id="msgSala" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
+      </form>
+
+      <form id="editForm" style="display:none;margin-top:20px;border-top:2px solid #eee;padding-top:20px;">
+        <h2>Editar Sala</h2>
+
+        <input type="hidden" id="editId">
+        <label for="editNombre">Nombre de la Sala:</label>
+        <input type="text" id="editNombre" name="editNombre" required>
+
+        <label for="editTipoEspacio">Tipo de espacio:</label>
+        <select id="editTipoEspacio" name="editTipoEspacio" required>
+          <option value="">Seleccionar tipo</option>
+        </select>
+
+        <div style="display:flex;gap:10px;margin-top:10px;">
+          <button type="button" id="btnActualizarSala" style="background:#045D18;">Actualizar</button>
+          <button type="button" id="btnCancelarEdicion" style="background:#666;">Cancelar</button>
+        </div>
+        <div id="msgEdit" style="color:#045D18;font-weight:bold;margin-top:10px;"></div>
+      </form>
+    </div>
 
     <section class="listSection" style="flex:1;min-width:320px;max-width:500px;">
       <h2>Espacios Registrados</h2>
@@ -310,6 +388,9 @@
               <td style='padding:7px 4px;border-bottom:1px solid #eee;'>${e.nombre}</td>
               <td style='padding:7px 4px;border-bottom:1px solid #eee;'>
                 <div class="acciones">
+                  <button class="btn-editar" onclick="iniciarEdicion('${e.nombre}', '${e.id_tipo_espacio}', '${e.id_espacio}')">
+                    Editar
+                  </button>
                   <button class="btn-eliminar" onclick="confirmarEliminar('${e.nombre}', '${e.id_tipo_espacio}')">
                     Eliminar
                   </button>
@@ -448,6 +529,85 @@
         this.style.display = 'none';
       }
     });
+
+    // Variables y funciones para editar sala
+    let salaAEditar = null;
+
+    // Función para iniciar la edición
+    async function iniciarEdicion(nombre, id_tipo_espacio, id_espacio) {
+      try {
+        // Cargar tipos de espacio en el selector de edición
+        const res = await fetch('http://localhost:3001/api/tipos-espacio');
+        const data = await res.json();
+        const editSelect = document.getElementById('editTipoEspacio');
+        
+        if (data.success && Array.isArray(data.tipos)) {
+          editSelect.innerHTML = '<option value="">Seleccionar tipo</option>' + 
+            data.tipos.map(t => `<option value="${t.id_tipo_espacio}">${t.nombre}</option>`).join('');
+          
+          // Establecer valores en el formulario de edición
+          document.getElementById('editId').value = id_espacio;
+          document.getElementById('editNombre').value = nombre;
+          document.getElementById('editTipoEspacio').value = id_tipo_espacio;
+          
+          // Mostrar el formulario de edición
+          document.getElementById('editForm').style.display = 'block';
+          document.getElementById('editForm').scrollIntoView({ behavior: 'smooth' });
+        } else {
+          alert('Error al cargar tipos de espacio');
+        }
+      } catch (e) {
+        console.error('Error al cargar tipos de espacio:', e);
+        alert('Error al cargar tipos de espacio');
+      }
+    }
+
+    // Función para cancelar la edición
+    document.getElementById('btnCancelarEdicion').onclick = function() {
+      document.getElementById('editForm').style.display = 'none';
+      document.getElementById('editForm').reset();
+      document.getElementById('msgEdit').textContent = '';
+    };
+
+    // Función para actualizar sala
+    document.getElementById('btnActualizarSala').onclick = async function() {
+      const nombre = document.getElementById('editNombre').value.trim();
+      const id_tipo_espacio = document.getElementById('editTipoEspacio').value;
+      const id_espacio = document.getElementById('editId').value;
+      const msg = document.getElementById('msgEdit');
+      
+      if (!nombre || !id_tipo_espacio) {
+        msg.textContent = 'Complete todos los campos.';
+        msg.style.color = '#b30000';
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:3001/api/espacios/${id_espacio}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, id_tipo_espacio })
+        });
+        
+        const data = await res.json();
+        if (data.success) {
+          msg.textContent = 'Sala actualizada correctamente.';
+          msg.style.color = '#045D18';
+          await cargarEspacios();
+          // Ocultar formulario después de 2 segundos
+          setTimeout(() => {
+            document.getElementById('btnCancelarEdicion').click();
+          }, 2000);
+        } else {
+          msg.textContent = data.message || 'No se pudo actualizar la sala';
+          msg.style.color = '#b30000';
+        }
+      } catch (e) {
+        console.error('Error al editar:', e);
+        msg.textContent = 'Error de conexión con el servidor';
+        msg.style.color = '#b30000';
+      }
+    };
   </script>
 </body>
 </html>
