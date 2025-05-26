@@ -1,8 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
-// Importar modelo de reserva
+// Importar modelos
 const reservaModel = require('./models/reserva');
+const espacioModel = require('./models/espacio');
+const tipoEspacioModel = require('./models/tipo_espacio');
 
 const app = express();
 const port = 3001; // El backend correrá en el puerto 3001
@@ -243,6 +245,81 @@ app.delete('/api/usuarios', async (req, res) => {
   }
 });
 
+// Eliminar sala por nombre y tipo de espacio (primero reservas, luego sala)
+app.delete('/api/espacios', async (req, res) => {
+  const { nombre, id_tipo_espacio } = req.body;
+  if (!nombre || !id_tipo_espacio) {
+    return res.status(400).json({ success: false, message: 'Nombre y tipo de espacio requeridos' });
+  }
+
+  const client = await pool.connect();
+  
+  try {
+    await client.query('BEGIN'); // Iniciar transacción
+
+    // Verificar si existe el tipo de espacio
+    const tipoResult = await client.query(
+      'SELECT id_tipo_espacio FROM tipo_espacio WHERE id_tipo_espacio = $1',
+      [id_tipo_espacio]
+    );
+
+    if (tipoResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ success: false, message: 'Tipo de espacio no encontrado' });
+    }
+
+    // Buscar la sala por nombre y tipo de espacio
+    const espacioResult = await client.query(
+      'SELECT id_espacio FROM espacio WHERE nombre = $1 AND id_tipo_espacio = $2',
+      [nombre, id_tipo_espacio]
+    );
+
+    if (espacioResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ success: false, message: 'Sala no encontrada' });
+    }
+
+    const id_espacio = espacioResult.rows[0].id_espacio;
+
+    // Eliminar primero las reservas asociadas
+    const reservasResult = await client.query(
+      'DELETE FROM reserva WHERE id_espacio = $1 RETURNING id_reserva',
+      [id_espacio]
+    );
+    
+    // Eliminar el espacio
+    const espacioDeleteResult = await client.query(
+      'DELETE FROM espacio WHERE id_espacio = $1 AND id_tipo_espacio = $2 RETURNING *',
+      [id_espacio, id_tipo_espacio]
+    );
+
+    if (espacioDeleteResult.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(500).json({ success: false, message: 'No se pudo eliminar la sala' });
+    }
+
+    await client.query('COMMIT');
+    
+    res.json({ 
+      success: true, 
+      mensaje: 'Sala eliminada correctamente',
+      espacio: espacioDeleteResult.rows[0],
+      reservasEliminadas: reservasResult.rows.length
+    });
+
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Error al eliminar sala:', err);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error al eliminar sala',
+      error: err.message 
+    });
+  } finally {
+    client.release();
+  }
+});
+
 // Endpoint para gestión de reservas (admin, con filtros)
 app.get('/api/reservas-admin', async (req, res) => {
   try {
@@ -283,7 +360,71 @@ app.get('/api/reservas-admin', async (req, res) => {
   }
 });
 
+// Actualizar espacio
+app.put('/api/espacios/:id', async (req, res) => {
+  console.log('1. Iniciando actualización de espacio');
+  console.log('Datos recibidos:', { id: req.params.id, ...req.body });
+
+  const { id } = req.params;
+  const { nombre, id_tipo_espacio } = req.body;
+
+  if (!nombre || !id_tipo_espacio) {
+    console.log('2. Error: Faltan datos requeridos');
+    return res.json({ success: false, message: 'Faltan datos requeridos' });
+  }
+
+  try {
+    console.log('3. Verificando si el espacio existe');
+    // Verificar si el espacio existe
+    const espacioExistente = await pool.query('SELECT * FROM espacio WHERE id_espacio = $1', [id]);
+    console.log('Resultado búsqueda espacio:', espacioExistente.rows);
+    
+    if (espacioExistente.rows.length === 0) {
+      console.log('4. Error: Espacio no encontrado');
+      return res.json({ success: false, message: 'Espacio no encontrado' });
+    }
+
+    console.log('5. Verificando si el tipo de espacio existe');
+    // Verificar si el tipo de espacio existe
+    const tipoExistente = await pool.query('SELECT * FROM tipo_espacio WHERE id_tipo_espacio = $1', [id_tipo_espacio]);
+    console.log('Resultado búsqueda tipo:', tipoExistente.rows);
+    
+    if (tipoExistente.rows.length === 0) {
+      console.log('6. Error: Tipo de espacio no válido');
+      return res.json({ success: false, message: 'Tipo de espacio no válido' });
+    }
+
+    console.log('7. Verificando si el nombre ya existe');
+    // Verificar si el nombre ya existe para otro espacio
+    const espacioNombre = await pool.query('SELECT * FROM espacio WHERE nombre = $1 AND id_espacio != $2', [nombre, id]);
+    console.log('Resultado búsqueda nombre duplicado:', espacioNombre.rows);
+    
+    if (espacioNombre.rows.length > 0) {
+      console.log('8. Error: Nombre duplicado');
+      return res.json({ success: false, message: 'Ya existe un espacio con ese nombre' });
+    }
+
+    console.log('9. Intentando actualizar el espacio');
+    // Actualizar el espacio usando el modelo
+    const espacioActualizado = await espacioModel.updateEspacio(id, { nombre, id_tipo_espacio });
+    console.log('Resultado actualización:', espacioActualizado);
+    
+    if (espacioActualizado) {
+      console.log('10. Éxito: Espacio actualizado correctamente');
+      res.json({ success: true, message: 'Espacio actualizado correctamente', espacio: espacioActualizado });
+    } else {
+      console.log('11. Error: No se pudo actualizar el espacio');
+      res.json({ success: false, message: 'No se pudo actualizar el espacio' });
+    }
+  } catch (error) {
+    console.error('12. Error en el proceso de actualización:', error);
+    console.error('Stack trace:', error.stack);
+    res.json({ success: false, message: 'Error al actualizar el espacio', error: error.message });
+  }
+});
+
 // Iniciar servidor
 app.listen(port, () => {
   console.log(`Servidor backend escuchando en http://localhost:${port}`);
 });
+

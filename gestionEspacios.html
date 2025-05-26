@@ -35,6 +35,218 @@
       font-size: 1rem;
       background: #f5f5f5;
     }
+
+    .filtros {
+      margin-bottom: 20px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    
+    .filtros select {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      min-width: 200px;
+    }
+
+    .espacios-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    .espacios-table th {
+      background: #045D18;
+      color: #fff;
+      padding: 8px 4px;
+      text-align: left;
+    }
+
+    .espacios-table td {
+      padding: 7px 4px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .espacios-table tr.hidden {
+      display: none;
+    }
+
+    .btn-editar {
+      background: #045D18;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .btn-editar:hover {
+      background: #034713;
+    }
+
+    .btn-guardar {
+      background: #045D18;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .btn-guardar:hover {
+      background: #034713;
+    }
+
+    .btn-cancelar {
+      background: #666;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: 4px;
+    }
+
+    .btn-cancelar:hover {
+      background: #555;
+    }
+
+    .btn-eliminar {
+      background: #b30000;
+      color: white;
+      border: none;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin-left: 8px;
+    }
+
+    .btn-eliminar:hover {
+      background: #8b0000;
+    }
+
+    .acciones {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .editable-cell {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .editable-cell input,
+    .editable-cell select {
+      padding: 4px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      width: auto;
+      margin: 0;
+    }
+
+    .editable-cell span {
+      padding: 4px 0;
+    }
+
+    .error-message {
+      color: #b30000;
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    /* Modal de confirmación para eliminar */
+    #modalConfirmarEliminar {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #modalConfirmarEliminar .modal-content {
+      text-align: center;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .btn-confirmar-eliminar {
+      background: #b30000;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-cancelar-eliminar {
+      background: #666;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Modal de edición */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      color: #045D18;
+    }
+
+    .btn-cerrar {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      padding: 0;
+      color: #666;
+    }
   </style>
 </head>
 <body>
@@ -47,63 +259,116 @@
     </nav>
   </header>
 
-  
   <main class="formSection" style="display:flex;gap:3rem;align-items:flex-start;">
-    <form id="spaceForm" style="min-width:340px;max-width:400px;flex:1;">
-      <h2>Agregar Espacio</h2>
+    <div style="min-width:340px;max-width:400px;flex:1;">
+      <form id="spaceForm">
+        <h2>Agregar Espacio</h2>
 
-      <label for="spaceName">Nombre del Espacio:</label>
-      <input type="text" id="spaceName" name="spaceName" placeholder="Ej: Coliseo" required>
+        <label for="spaceName">Nombre del Espacio:</label>
+        <input type="text" id="spaceName" name="spaceName" placeholder="Ej: Coliseo" required>
 
-      <button type="button" id="btnCrearTipoEspacio" style="margin-bottom:18px;display:block;">Crear tipo de espacio</button>
-      <div id="msgTipoEspacio" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
+        <button type="button" id="btnCrearTipoEspacio" style="margin-bottom:18px;display:block;">Crear tipo de espacio</button>
+        <div id="msgTipoEspacio" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
+      </form>
 
+      <form id="salaForm">
+        <h2>Agregar Sala</h2>
 
-      <h2>Agregar Sala </h2>
+        <label for="salaName">Nombre de la Sala:</label>
+        <input type="text" id="salaName" name="salaName" placeholder="Ej: Gimnasio" required>
 
-      <label for="salaName">Nombre de la Sala:</label>
-      <input type="text" id="salaName" name="salaName" placeholder="Ej: Gimnasio" required>
-
-      <label for="spaceType">Tipo de espacio:</label>
-      <select id="spaceType" name="spaceType" required>
-        <option value="">Cargando tipos...</option>
-      </select>
-      <button type="button" id="btnCrearSala">Crear sala</button>
-      <div id="msgSala" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
-    </form>
+        <label for="spaceType">Tipo de espacio:</label>
+        <select id="spaceType" name="spaceType" required>
+          <option value="">Cargando tipos...</option>
+        </select>
+        <button type="button" id="btnCrearSala">Crear sala</button>
+        <div id="msgSala" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
+      </form>
+    </div>
 
     <section class="listSection" style="flex:1;min-width:320px;max-width:500px;">
       <h2>Espacios Registrados</h2>
-      <table style="width:100%;border-collapse:collapse;">
+      <section class="filtros">
+        <div>
+          <label for="tipoEspacio">Filtrar por Tipo de Espacio:</label>
+          <select id="tipoEspacio">
+            <option value="">Todos los espacios</option>
+          </select>
+        </div>
+      </section>
+      <table class="espacios-table">
         <thead>
-          <tr style="background:#045D18;color:#fff;">
-            <th style="padding:8px 4px;text-align:left;">Espacio</th>
-            <th style="padding:8px 4px;text-align:left;">Sala</th>
+          <tr>
+            <th>Espacio</th>
+            <th>Sala</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody id="spaceList">
-          <!-- Aquí se cargarán dinámicamente los espacios -->
+          <!-- Los espacios se cargarán dinámicamente aquí -->
         </tbody>
       </table>
     </section>
   </main>
+
+  <!-- Modal de confirmación -->
+  <div id="modalConfirmacion" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0007;z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:2rem 2.5rem;border-radius:10px;box-shadow:0 2px 16px #0003;text-align:center;max-width:350px;">
+      <h3 style="margin-bottom:1.2rem;">¿Está seguro de eliminar esta sala?</h3>
+      <p style="color:#666;margin-bottom:1.5rem;font-size:0.9rem;">Se eliminarán también todas las reservas asociadas.</p>
+      <button id="btnConfirmarEliminar" style="background:#b30000;color:#fff;padding:0.5rem 1.2rem;margin-right:1.2rem;border-radius:6px;border:none;font-weight:700;">Aceptar</button>
+      <button id="btnCancelarEliminar" style="background:#eee;color:#222;padding:0.5rem 1.2rem;border-radius:6px;border:none;font-weight:700;">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Modal de edición -->
+  <div id="modalEdicion" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0007;z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:2rem 2.5rem;border-radius:10px;box-shadow:0 2px 16px #0003;max-width:400px;width:90%;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h3 style="margin:0;color:#045D18;">Editar Sala</h3>
+        <button onclick="cerrarModalEdicion()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;padding:0;color:#666;">&times;</button>
+      </div>
+      
+      <form id="editForm">
+        <input type="hidden" id="editId">
+        
+        <label for="editNombre">Nombre de la Sala:</label>
+        <input type="text" id="editNombre" name="editNombre" required style="width:100%;margin-bottom:1rem;">
+
+        <label for="editTipoEspacio">Tipo de espacio:</label>
+        <select id="editTipoEspacio" name="editTipoEspacio" required style="width:100%;margin-bottom:1.5rem;">
+          <option value="">Seleccionar tipo</option>
+        </select>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+          <button type="button" onclick="cerrarModalEdicion()" style="background:#666;color:white;padding:8px 16px;border-radius:4px;border:none;cursor:pointer;">Cancelar</button>
+          <button type="button" onclick="actualizarSala()" style="background:#045D18;color:white;padding:8px 16px;border-radius:4px;border:none;cursor:pointer;">Guardar</button>
+        </div>
+        <div id="msgEdit" style="color:#045D18;font-weight:bold;margin-top:10px;text-align:center;"></div>
+      </form>
+    </div>
+  </div>
 
   <script src="js/main.js"></script>
   <script>
     // Cargar tipos de espacio desde la base de datos
     async function cargarTiposEspacio() {
       const select = document.getElementById('spaceType');
+      const filterSelect = document.getElementById('tipoEspacio');
       try {
         const res = await fetch('http://localhost:3001/api/tipos-espacio');
         const data = await res.json();
         if (data.success && Array.isArray(data.tipos)) {
-          select.innerHTML = '<option value="">Seleccionar tipo</option>' +
-            data.tipos.map(t => `<option value="${t.id_tipo_espacio}">${t.nombre}</option>`).join('');
+          const optionsHtml = data.tipos.map(t => `<option value="${t.id_tipo_espacio}">${t.nombre}</option>`).join('');
+          select.innerHTML = '<option value="">Seleccionar tipo</option>' + optionsHtml;
+          filterSelect.innerHTML = '<option value="">Todos los espacios</option>' + optionsHtml;
         } else {
           select.innerHTML = '<option value="">No hay tipos disponibles</option>';
+          filterSelect.innerHTML = '<option value="">No hay tipos disponibles</option>';
         }
       } catch (e) {
         select.innerHTML = '<option value="">Error al cargar tipos</option>';
+        filterSelect.innerHTML = '<option value="">Error al cargar tipos</option>';
       }
     }
     document.addEventListener('DOMContentLoaded', cargarTiposEspacio);
@@ -111,7 +376,7 @@
     // Cargar lista de espacios y tipos
     async function cargarEspacios() {
       const tbody = document.getElementById('spaceList');
-      tbody.innerHTML = '<tr><td colspan="2">Cargando...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="3">Cargando...</td></tr>';
       try {
         // Obtener tipos de espacio para mapear id -> nombre
         const tiposRes = await fetch('http://localhost:3001/api/tipos-espacio');
@@ -127,13 +392,26 @@
           // Ordenar por nombre de espacio (sala)
           data.espacios.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es', {sensitivity:'base'}));
           tbody.innerHTML = data.espacios.map(e =>
-            `<tr><td style='padding:7px 4px;border-bottom:1px solid #eee;'>${tiposMap[e.id_tipo_espacio] || '-'}</td><td style='padding:7px 4px;border-bottom:1px solid #eee;'>${e.nombre}</td></tr>`
+            `<tr data-tipo-espacio="${e.id_tipo_espacio}">
+              <td style='padding:7px 4px;border-bottom:1px solid #eee;'>${tiposMap[e.id_tipo_espacio] || '-'}</td>
+              <td style='padding:7px 4px;border-bottom:1px solid #eee;'>${e.nombre}</td>
+              <td style='padding:7px 4px;border-bottom:1px solid #eee;'>
+                <div class="acciones">
+                  <button class="btn-editar" onclick="iniciarEdicion('${e.nombre}', '${e.id_tipo_espacio}', '${e.id_espacio}')">
+                    Editar
+                  </button>
+                  <button class="btn-eliminar" onclick="confirmarEliminar('${e.nombre}', '${e.id_tipo_espacio}')">
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>`
           ).join('');
         } else {
-          tbody.innerHTML = '<tr><td colspan="2">No hay espacios registrados.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="3">No hay espacios registrados.</td></tr>';
         }
       } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="2">Error al cargar espacios.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3">Error al cargar espacios.</td></tr>';
       }
     }
     document.addEventListener('DOMContentLoaded', cargarEspacios);
@@ -203,6 +481,146 @@
         msg.style.color = '#b30000';
       }
     };
+
+    // Filtrar espacios por tipo
+    document.getElementById('tipoEspacio').addEventListener('change', function() {
+      const tipoSeleccionado = this.value;
+      const rows = document.querySelectorAll('#spaceList tr[data-tipo-espacio]');
+      
+      rows.forEach(row => {
+        if (!tipoSeleccionado || row.dataset.tipoEspacio === tipoSeleccionado) {
+          row.classList.remove('hidden');
+        } else {
+          row.classList.add('hidden');
+        }
+      });
+    });
+
+    // Variables y funciones para eliminar sala
+    let salaAEliminar = null;
+
+    function confirmarEliminar(nombre, id_tipo_espacio) {
+      salaAEliminar = { nombre, id_tipo_espacio };
+      document.getElementById('modalConfirmacion').style.display = 'flex';
+    }
+
+    document.getElementById('btnConfirmarEliminar').onclick = async function() {
+      if (!salaAEliminar) return;
+      try {
+        const res = await fetch('http://localhost:3001/api/espacios', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(salaAEliminar)
+        });
+        const data = await res.json();
+        if (data.success) {
+          await cargarEspacios();
+          document.getElementById('modalConfirmacion').style.display = 'none';
+        } else {
+          alert(data.message || 'No se pudo eliminar la sala');
+        }
+      } catch (e) {
+        console.error('Error al eliminar:', e);
+        alert('Error de conexión con el servidor');
+      }
+      salaAEliminar = null;
+    };
+
+    document.getElementById('btnCancelarEliminar').onclick = function() {
+      salaAEliminar = null;
+      document.getElementById('modalConfirmacion').style.display = 'none';
+    };
+
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('modalConfirmacion').addEventListener('click', function(e) {
+      if (e.target === this) {
+        salaAEliminar = null;
+        this.style.display = 'none';
+      }
+    });
+
+    // Variables y funciones para editar sala
+    let salaAEditar = null;
+
+    // Función para iniciar la edición
+    async function iniciarEdicion(nombre, id_tipo_espacio, id_espacio) {
+      try {
+        // Cargar tipos de espacio en el selector de edición
+        const res = await fetch('http://localhost:3001/api/tipos-espacio');
+        const data = await res.json();
+        const editSelect = document.getElementById('editTipoEspacio');
+        
+        if (data.success && Array.isArray(data.tipos)) {
+          editSelect.innerHTML = '<option value="">Seleccionar tipo</option>' + 
+            data.tipos.map(t => `<option value="${t.id_tipo_espacio}">${t.nombre}</option>`).join('');
+          
+          // Establecer valores en el formulario de edición
+          document.getElementById('editId').value = id_espacio;
+          document.getElementById('editNombre').value = nombre;
+          document.getElementById('editTipoEspacio').value = id_tipo_espacio;
+          
+          // Mostrar el modal de edición
+          document.getElementById('modalEdicion').style.display = 'flex';
+        } else {
+          alert('Error al cargar tipos de espacio');
+        }
+      } catch (e) {
+        console.error('Error al cargar tipos de espacio:', e);
+        alert('Error al cargar tipos de espacio');
+      }
+    }
+
+    // Función para cerrar el modal de edición
+    function cerrarModalEdicion() {
+      document.getElementById('modalEdicion').style.display = 'none';
+      document.getElementById('editForm').reset();
+      document.getElementById('msgEdit').textContent = '';
+    }
+
+    // Función para actualizar la sala
+    async function actualizarSala() {
+      const id = document.getElementById('editId').value;
+      const nombre = document.getElementById('editNombre').value;
+      const id_tipo_espacio = document.getElementById('editTipoEspacio').value;
+      const msgEdit = document.getElementById('msgEdit');
+
+      if (!nombre || !id_tipo_espacio) {
+        msgEdit.textContent = 'Por favor complete todos los campos';
+        msgEdit.style.color = '#b30000';
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:3001/api/espacios/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, id_tipo_espacio })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          msgEdit.textContent = 'Sala actualizada correctamente';
+          msgEdit.style.color = '#045D18';
+          await cargarEspacios();
+          // Cerrar el modal después de 1.5 segundos
+          setTimeout(cerrarModalEdicion, 1500);
+        } else {
+          msgEdit.textContent = data.message || 'No se pudo actualizar la sala';
+          msgEdit.style.color = '#b30000';
+        }
+      } catch (e) {
+        console.error('Error:', e);
+        msgEdit.textContent = 'Error de conexión con el servidor';
+        msgEdit.style.color = '#b30000';
+      }
+    }
+
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('modalEdicion').addEventListener('click', function(e) {
+      if (e.target === this) {
+        cerrarModalEdicion();
+      }
+    });
   </script>
 </body>
 </html>

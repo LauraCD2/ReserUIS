@@ -2,67 +2,267 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Espacios | ReserUIS</title>
   <link rel="stylesheet" href="css/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    body, h1, h2, p, a, button {
-      font-family: 'Humanist521', sans-serif;
+    :root {
+      --primary-color: #045D18;
+      --accent-color: #59C208;
+      --text-color: #333;
+      --light-gray: #f5f5f5;
+      --border-color: #ddd;
     }
 
-    h1 {
-      font-weight: 700;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    h2 {
-      font-weight: 700;
+    body {
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      color: var(--text-color);
+      line-height: 1.6;
+      background: #f8f9fa;
     }
 
-    p {
-      font-weight: 400;
+    .main-header {
+      background: #045D18;
+      padding: 1.5rem 2rem;
+      color: white;
+      box-shadow: 0 2px 10px rgba(4, 93, 24, 0.2);
+    }
+
+    .header-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-content h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
     }
 
     nav a {
-      font-weight: 700;
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
-    button {
-      font-weight: 700;
+    nav a:not([href="logout.html"]):hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: white;
+      transform: translateY(-1px);
+    }
+
+    nav a[href="logout.html"] {
+      background: rgba(220, 53, 69, 0.1);
+      color: #fff;
+      border: 1px solid rgba(220, 53, 69, 0.5);
+    }
+
+    nav a[href="logout.html"]:hover {
+      background: #dc3545;
+      border-color: #dc3545;
+      transform: translateY(-1px);
+    }
+
+    nav a i {
+      font-size: 1.1rem;
+    }
+
+    .space-grid {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .space-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(89, 194, 8, 0.1);
+      transition: all 0.3s ease;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .space-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(89, 194, 8, 0.15);
+    }
+
+    .space-card img {
+      width: 100%;
+      max-width: 280px;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .card-content {
+      padding: 1.5rem;
+    }
+
+    .card-content h2 {
+      color: #045D18;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .card-content p {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .select-btn {
+      width: 100%;
+      padding: 0.875rem;
+      background: white;
+      color: #045D18;
+      border: 2px solid #045D18;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .select-btn:hover {
+      background: #045D18;
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      nav ul {
+        gap: 1rem;
+      }
+
+      .space-grid {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+        margin: 2rem auto;
+      }
+
+      .space-card img {
+        max-width: 220px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav ul {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      nav a {
+        display: flex;
+        padding: 0.75rem;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="mainHeader">
-    <h1>Espacios Disponibles</h1>
-    <nav>
-      <ul>
-        <li><a href="historial.html">Historial</a></li>
-        <li><a href="notificaciones.html">Notificaciones</a></li>
-        <li><a href="logout.html">Salir</a></li>
-      </ul>
-    </nav>
-  </header>
-  <main class="spaceGrid">
-    <div class="spaceCard">
-      <h2>COLISEO</h2>
-      <p>Espacios deportivos disponibles para partidos, entrenamientos y actividades recreativas.</p>
-      <button onclick="window.location.href='seleccionarSalaColiseo.html'">Seleccionar</button>
-    </div>    
-    <div class="spaceCard">
-      <h2>CANCHAS</h2>
-      <p>Áreas deportivas disponibles para partidos, entrenamientos y actividades recreativas.</p>
-      <button onclick="window.location.href='seleccionarSalaCanchas.html'">Seleccionar</button>
-    </div>    
-    <div class="spaceCard">
-      <h2>BIBLIOTECA</h2>
-      <p>Espacios individuales y grupales diseñados para el estudio, la lectura y el trabajo académico.</p>
-      <button onclick="window.location.href='seleccionarSalaBiblioteca.html'">Seleccionar</button>
+  <header class="main-header">
+    <div class="header-content">
+      <h1>Espacios Disponibles</h1>
+      <nav>
+        <ul>
+          <li><a href="historial.html">Historial</a></li>
+          <li><a href="notificaciones.html">Notificaciones</a></li>
+          <li><a href="logout.html">Salir</a></li>
+        </ul>
+      </nav>
     </div>
-    <div class="spaceCard">
-      <h2>CENTIC</h2>
-      <p>Espacios individuales y grupales diseñados para el estudio, la lectura y el trabajo académico.</p>
-      <button onclick="window.location.href='seleccionarSalaCENTIC.html'">Seleccionar</button>
+  </header>
+
+  <main class="space-grid">
+    <div class="space-card">
+      <img src="assets/espacios/coli.jpg" alt="Coliseo" style="width:100%;max-width:280px;border-radius:8px;margin-bottom:1rem;" />
+      <div class="card-content">
+        <h2>COLISEO</h2>
+        <p>Espacios deportivos disponibles para partidos, entrenamientos y actividades recreativas.</p>
+        <button class="select-btn" onclick="window.location.href='seleccionarSalaColiseo.html'">
+          Seleccionar Espacio
+        </button>
+      </div>
+    </div>
+
+    <div class="space-card">
+      <img src="assets/espacios/canch.jpg" alt="Canchas" style="width:100%;max-width:280px;border-radius:8px;margin-bottom:1rem;" />
+      <div class="card-content">
+        <h2>CANCHAS</h2>
+        <p>Áreas deportivas disponibles para partidos, entrenamientos y actividades recreativas.</p>
+        <button class="select-btn" onclick="window.location.href='seleccionarSalaCanchas.html'">
+          Seleccionar Espacio
+        </button>
+      </div>
+    </div>
+
+    <div class="space-card">
+      <img src="assets/espacios/biblio.jpg" alt="Biblioteca" style="width:100%;max-width:280px;border-radius:8px;margin-bottom:1rem;" />
+      <div class="card-content">
+        <h2>BIBLIOTECA</h2>
+        <p>Espacios individuales y grupales diseñados para el estudio, la lectura y el trabajo académico.</p>
+        <button class="select-btn" onclick="window.location.href='seleccionarSalaBiblioteca.html'">
+          Seleccionar Espacio
+        </button>
+      </div>
+    </div>
+
+    <div class="space-card">
+      <img src="assets/espacios/sala.png" alt="CENTIC" style="width:100%;max-width:280px;border-radius:8px;margin-bottom:1rem;" />
+      <div class="card-content">
+        <h2>CENTIC</h2>
+        <p>Espacios individuales y grupales diseñados para el estudio, la lectura y el trabajo académico.</p>
+        <button class="select-btn" onclick="window.location.href='seleccionarSalaCENTIC.html'">
+          Seleccionar Espacio
+        </button>
+      </div>
     </div>
   </main>
+
   <script src="js/main.js"></script>
 </body>
 </html>

@@ -11,24 +11,43 @@
       margin: 0;
     }
     .mainHeader {
-      background-color: #045D18;
+      background: #045D18;
+      padding: 1.5rem 2rem;
       color: white;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      box-shadow: 0 2px 10px rgba(4, 93, 24, 0.2);
     }
     .mainHeader nav ul {
       list-style: none;
       display: flex;
-      gap: 1rem;
-      margin: 0;
-      padding: 0;
+      gap: 2rem;
     }
     .mainHeader nav a {
       color: white;
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .mainHeader nav a:not([href="logout.html"]):hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: white;
+      transform: translateY(-1px);
+    }
+    .mainHeader nav a[href="logout.html"] {
+      background: rgba(220, 53, 69, 0.1);
+      color: #fff;
+      border: 1px solid rgba(220, 53, 69, 0.5);
+    }
+    .mainHeader nav a[href="logout.html"]:hover {
+      background: #dc3545;
+      border-color: #dc3545;
+      transform: translateY(-1px);
     }
     .salaContainer {
       padding: 2rem;
@@ -89,15 +108,15 @@
       <ul>
         <li><a href="espacios.html">Espacios</a></li>
         <li><a href="historial.html">Historial</a></li>
-        <li><a href="logout.html">Salir</a></li>
         <li><a href="notificaciones.html">Notificaciones</a></li>
+        <li><a href="logout.html">Salir</a></li>
       </ul>
     </nav>
   </header>
   <main class="salaContainer">
     <div class="salaCard">
       <h2>Aula</h2>
-      <img src="assets/salas_centic/sala.png" alt="Aula" style="width:100%;max-width:220px;border-radius:8px;margin-bottom:1rem;" />
+      <img src="assets/salas_centic/salacen.jpg" alt="Aula" style="width:100%;max-width:220px;border-radius:8px;margin-bottom:1rem;" />
       <p>Espacio equipado para clases, talleres y capacitaciones.</p>
     </div>
     <div class="salaCard">
