@@ -34,32 +34,40 @@ Sistema de reservas de espacios de la Universidad Industrial de Santander. Este 
 ```
 reseruis/
 ├── index.html                 # Pantalla de login
-├── espacios.html                 # Tarjetas de espacios disponibles
-├── gestionEspacios.html       # Formulario de creación y edición de espacios/salas
-├── historial.html             # Listado de historial de reservas
-├── notificaciones.html        # Alertas por cancelación o confirmación
-├── logout.html                # Cierre de sesión con redirección automática
-├── seleccionarSalaColiseo.html       # Salas del Coliseo para reservar
-├── seleccionarSalaCanchas.html   # Salas deportivas tipo canchas (fútbol, squash, etc.)
-├── seleccionarSalaBiblioteca.html   # Salas de la Biblioteca para reservar
-├── seleccionarSalaCENTIC.html   # Salas del CENTIC para reservar
-├── reservasColiseo.html        # Reservas para espacios del Coliseo
-├── reservasCanchas.html        # Reservas para espacios de Canchas
-├── reservasBiblioteca.html     # Reservas para espacios de Biblioteca
-├── reservasCENTIC.html         # Reservas para espacios de CENTIC
+├── loginAdmin.html            # Login para administradores
+├── menu_admin.html            # Panel de administración
+├── espacios.html             # Tarjetas de espacios disponibles
+├── gestionEspacios.html      # Formulario de creación y edición de espacios/salas
+├── gestionReservas.html      # Gestión de reservas para administradores
+├── gestionUsuarios.html      # Gestión de usuarios del sistema
+├── historial.html            # Listado de historial de reservas
+├── notificaciones.html       # Alertas por cancelación o confirmación
+├── logout.html               # Cierre de sesión con redirección automática
+├── seleccionarSalaColiseo.html    # Salas del Coliseo para reservar
+├── seleccionarSalaCanchas.html    # Salas deportivas tipo canchas
+├── seleccionarSalaBiblioteca.html # Salas de la Biblioteca para reservar
+├── seleccionarSalaCENTIC.html     # Salas del CENTIC para reservar
+├── reservasColiseo.html      # Reservas para espacios del Coliseo
+├── reservasCanchas.html      # Reservas para espacios de Canchas
+├── reservasBiblioteca.html   # Reservas para espacios de Biblioteca
+├── reservasCENTIC.html       # Reservas para espacios de CENTIC
 ├── css/
-│   └── styles.css             # Estilos globales, con fuente institucional
+│   └── styles.css           # Estilos globales, con fuente institucional
 ├── js/
-│   └── main.js                # Script base para interacción frontend
+│   ├── main.js             # Script principal para interacción frontend
+│   ├── login.js            # Lógica de autenticación
+│   └── historial.js        # Lógica para el historial de reservas
 ├── fonts/
-│   └── *.woff2                # Archivos Humanist521 (uso institucional)
+│   └── *.woff2            # Archivos Humanist521 (uso institucional)
 ├── assets/
-│   └── logo.png               # Imágenes, íconos u otros recursos
+│   └── logo.png           # Imágenes, íconos u otros recursos
 ├── backend/
-│   ├── index.js               # Servidor Express (API REST)
-│   ├── package.json           # Dependencias backend (Express, pg, cors)
-│   └── package-lock.json      # Lockfile generado automáticamente
-└── README.md                  # Documentación del proyecto
+│   ├── index.js           # Servidor Express (API REST)
+│   ├── package.json       # Dependencias backend (Express, pg, cors)
+│   └── package-lock.json  # Lockfile generado automáticamente
+├── .gitignore            # Archivos y carpetas ignorados por git
+├── index.js              # Archivo de configuración principal
+└── README.md            # Documentación del proyecto
 ```
 
 ---
