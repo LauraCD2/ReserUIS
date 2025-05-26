@@ -284,25 +284,6 @@
         <button type="button" id="btnCrearSala">Crear sala</button>
         <div id="msgSala" style="color:#045D18;font-weight:bold;margin-bottom:10px;"></div>
       </form>
-
-      <form id="editForm" style="display:none;margin-top:20px;border-top:2px solid #eee;padding-top:20px;">
-        <h2>Editar Sala</h2>
-
-        <input type="hidden" id="editId">
-        <label for="editNombre">Nombre de la Sala:</label>
-        <input type="text" id="editNombre" name="editNombre" required>
-
-        <label for="editTipoEspacio">Tipo de espacio:</label>
-        <select id="editTipoEspacio" name="editTipoEspacio" required>
-          <option value="">Seleccionar tipo</option>
-        </select>
-
-        <div style="display:flex;gap:10px;margin-top:10px;">
-          <button type="button" id="btnActualizarSala" style="background:#045D18;">Actualizar</button>
-          <button type="button" id="btnCancelarEdicion" style="background:#666;">Cancelar</button>
-        </div>
-        <div id="msgEdit" style="color:#045D18;font-weight:bold;margin-top:10px;"></div>
-      </form>
     </div>
 
     <section class="listSection" style="flex:1;min-width:320px;max-width:500px;">
@@ -337,6 +318,34 @@
       <p style="color:#666;margin-bottom:1.5rem;font-size:0.9rem;">Se eliminarán también todas las reservas asociadas.</p>
       <button id="btnConfirmarEliminar" style="background:#b30000;color:#fff;padding:0.5rem 1.2rem;margin-right:1.2rem;border-radius:6px;border:none;font-weight:700;">Aceptar</button>
       <button id="btnCancelarEliminar" style="background:#eee;color:#222;padding:0.5rem 1.2rem;border-radius:6px;border:none;font-weight:700;">Cancelar</button>
+    </div>
+  </div>
+
+  <!-- Modal de edición -->
+  <div id="modalEdicion" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0007;z-index:1000;align-items:center;justify-content:center;">
+    <div style="background:#fff;padding:2rem 2.5rem;border-radius:10px;box-shadow:0 2px 16px #0003;max-width:400px;width:90%;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+        <h3 style="margin:0;color:#045D18;">Editar Sala</h3>
+        <button onclick="cerrarModalEdicion()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;padding:0;color:#666;">&times;</button>
+      </div>
+      
+      <form id="editForm">
+        <input type="hidden" id="editId">
+        
+        <label for="editNombre">Nombre de la Sala:</label>
+        <input type="text" id="editNombre" name="editNombre" required style="width:100%;margin-bottom:1rem;">
+
+        <label for="editTipoEspacio">Tipo de espacio:</label>
+        <select id="editTipoEspacio" name="editTipoEspacio" required style="width:100%;margin-bottom:1.5rem;">
+          <option value="">Seleccionar tipo</option>
+        </select>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+          <button type="button" onclick="cerrarModalEdicion()" style="background:#666;color:white;padding:8px 16px;border-radius:4px;border:none;cursor:pointer;">Cancelar</button>
+          <button type="button" onclick="actualizarSala()" style="background:#045D18;color:white;padding:8px 16px;border-radius:4px;border:none;cursor:pointer;">Guardar</button>
+        </div>
+        <div id="msgEdit" style="color:#045D18;font-weight:bold;margin-top:10px;text-align:center;"></div>
+      </form>
     </div>
   </div>
 
@@ -550,9 +559,8 @@
           document.getElementById('editNombre').value = nombre;
           document.getElementById('editTipoEspacio').value = id_tipo_espacio;
           
-          // Mostrar el formulario de edición
-          document.getElementById('editForm').style.display = 'block';
-          document.getElementById('editForm').scrollIntoView({ behavior: 'smooth' });
+          // Mostrar el modal de edición
+          document.getElementById('modalEdicion').style.display = 'flex';
         } else {
           alert('Error al cargar tipos de espacio');
         }
@@ -562,52 +570,57 @@
       }
     }
 
-    // Función para cancelar la edición
-    document.getElementById('btnCancelarEdicion').onclick = function() {
-      document.getElementById('editForm').style.display = 'none';
+    // Función para cerrar el modal de edición
+    function cerrarModalEdicion() {
+      document.getElementById('modalEdicion').style.display = 'none';
       document.getElementById('editForm').reset();
       document.getElementById('msgEdit').textContent = '';
-    };
+    }
 
-    // Función para actualizar sala
-    document.getElementById('btnActualizarSala').onclick = async function() {
-      const nombre = document.getElementById('editNombre').value.trim();
+    // Función para actualizar la sala
+    async function actualizarSala() {
+      const id = document.getElementById('editId').value;
+      const nombre = document.getElementById('editNombre').value;
       const id_tipo_espacio = document.getElementById('editTipoEspacio').value;
-      const id_espacio = document.getElementById('editId').value;
-      const msg = document.getElementById('msgEdit');
-      
+      const msgEdit = document.getElementById('msgEdit');
+
       if (!nombre || !id_tipo_espacio) {
-        msg.textContent = 'Complete todos los campos.';
-        msg.style.color = '#b30000';
+        msgEdit.textContent = 'Por favor complete todos los campos';
+        msgEdit.style.color = '#b30000';
         return;
       }
 
       try {
-        const res = await fetch(`http://localhost:3001/api/espacios/${id_espacio}`, {
+        const res = await fetch(`http://localhost:3001/api/espacios/${id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ nombre, id_tipo_espacio })
         });
-        
+
         const data = await res.json();
         if (data.success) {
-          msg.textContent = 'Sala actualizada correctamente.';
-          msg.style.color = '#045D18';
+          msgEdit.textContent = 'Sala actualizada correctamente';
+          msgEdit.style.color = '#045D18';
           await cargarEspacios();
-          // Ocultar formulario después de 2 segundos
-          setTimeout(() => {
-            document.getElementById('btnCancelarEdicion').click();
-          }, 2000);
+          // Cerrar el modal después de 1.5 segundos
+          setTimeout(cerrarModalEdicion, 1500);
         } else {
-          msg.textContent = data.message || 'No se pudo actualizar la sala';
-          msg.style.color = '#b30000';
+          msgEdit.textContent = data.message || 'No se pudo actualizar la sala';
+          msgEdit.style.color = '#b30000';
         }
       } catch (e) {
-        console.error('Error al editar:', e);
-        msg.textContent = 'Error de conexión con el servidor';
-        msg.style.color = '#b30000';
+        console.error('Error:', e);
+        msgEdit.textContent = 'Error de conexión con el servidor';
+        msgEdit.style.color = '#b30000';
       }
-    };
+    }
+
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('modalEdicion').addEventListener('click', function(e) {
+      if (e.target === this) {
+        cerrarModalEdicion();
+      }
+    });
   </script>
 </body>
 </html>
